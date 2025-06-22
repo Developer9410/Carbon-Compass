@@ -1,124 +1,14 @@
 import React, { useState } from 'react';
-<<<<<<< HEAD
-import { supabase } from '../lib/supabase';
-=======
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
 import { motion } from 'framer-motion';
-import { Car, Home, Utensils, Package, ArrowRight, Info, Save, PlusCircle } from 'lucide-react';
+import { Car, Home, Utensils, ArrowRight, Info, Save, PlusCircle } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { useNavigate } from 'react-router-dom';
 import { TransportInput, EnergyInput, DietInput, CarbonData } from '../types';
-import { v4 as uuidv4 } from 'uuid';
-
-<<<<<<< HEAD
-const CalculatorPage: React.FC = () => {
-  const { user, addCarbonData } = useApp();
-=======
-// Demo implementation - in a real app, this would connect to the Carbon Interface API
-const calculateCarbonFootprint = (
-  transport: TransportInput | null, 
-  energy: EnergyInput | null,
-  diet: DietInput | null
-): number => {
-  let total = 0;
-  
-  if (transport) {
-    // Basic calculation based on transport type and distance
-    const baseFactors: Record<string, number> = {
-      car: 0.2, // kg CO2e per km
-      bus: 0.1,
-      train: 0.05,
-      plane: 0.25,
-      bike: 0,
-      walk: 0
-    };
-    
-    const frequencyMultipliers: Record<string, number> = {
-      daily: 30,
-      weekly: 4,
-      monthly: 1,
-      once: 1
-    };
-    
-    let factor = baseFactors[transport.type];
-    
-    // Adjust for fuel type if car
-    if (transport.type === 'car' && transport.fuelType) {
-      const fuelFactors: Record<string, number> = {
-        gasoline: 1,
-        diesel: 1.1,
-        electric: 0.3,
-        hybrid: 0.6
-      };
-      factor *= fuelFactors[transport.fuelType];
-    }
-    
-    // Adjust for passengers if applicable
-    if (transport.passengers && transport.passengers > 1) {
-      factor /= transport.passengers;
-    }
-    
-    total += factor * transport.distance * frequencyMultipliers[transport.frequency];
-  }
-  
-  if (energy) {
-    // Basic calculation for energy
-    const baseFactors: Record<string, number> = {
-      electricity: 0.4, // kg CO2e per kWh
-      heating: 0.2,
-      cooling: 0.3
-    };
-    
-    const periodMultipliers: Record<string, number> = {
-      daily: 30,
-      weekly: 4,
-      monthly: 1
-    };
-    
-    let factor = baseFactors[energy.type];
-    
-    // Adjust for renewable energy
-    if (energy.renewable) {
-      factor *= 0.2; // 80% reduction for renewable
-    }
-    
-    total += factor * energy.amount * periodMultipliers[energy.period];
-  }
-  
-  if (diet) {
-    // Basic calculation for diet
-    const meatFactors: Record<string, number> = {
-      high: 3.3, // kg CO2e per day
-      medium: 2.5,
-      low: 1.7,
-      none: 1.0
-    };
-    
-    const dairyFactors: Record<string, number> = {
-      high: 1.5,
-      medium: 1.0,
-      low: 0.5,
-      none: 0.1
-    };
-    
-    // Base calculation from meat and dairy
-    let dietTotal = meatFactors[diet.meatConsumption] + dairyFactors[diet.dairyConsumption];
-    
-    // Adjust for local food percentage (up to 20% reduction)
-    dietTotal *= (1 - (diet.localFoodPercentage * 0.2 / 100));
-    
-    // Adjust for waste (up to 10% increase)
-    dietTotal *= (1 + (diet.wastePercentage * 0.1 / 100));
-    
-    // Monthly total
-    total += dietTotal * 30;
-  }
-  
-  return parseFloat(total.toFixed(2));
-};
+import { supabase } from '../lib/supabase';
 
 const CalculatorPage: React.FC = () => {
-  const { addCarbonData } = useApp();
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
+  const { addCarbonData, user } = useApp();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'transport' | 'energy' | 'diet'>('transport');
   const [transportInput, setTransportInput] = useState<TransportInput>({
     type: 'car',
@@ -140,167 +30,129 @@ const CalculatorPage: React.FC = () => {
     localFoodPercentage: 20,
     wastePercentage: 15
   });
-  
-  const [calculatedFootprint, setCalculatedFootprint] = useState<number | null>(null);
+  const [calculationResult, setCalculationResult] = useState<any>(null);
   const [showResults, setShowResults] = useState(false);
-  
+  const [isCalculating, setIsCalculating] = useState(false);
+
   const handleTabChange = (tab: 'transport' | 'energy' | 'diet') => {
     setActiveTab(tab);
   };
-<<<<<<< HEAD
 
   const handleCalculate = async () => {
-  try {
-    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/estimateCarbon`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    transport: transportInput,
-    energy: energyInput,
-    diet: dietInput
-  })
-});
+    if (!user) {
+      alert('Please log in to calculate your carbon footprint.');
+      return;
+    }
 
-if (!response.ok) {
-  throw new Error('Failed to calculate carbon footprint.');
-}
+    setIsCalculating(true);
 
-// ✅ Add this check before parsing
-if (!response.headers.get('Content-Type')?.includes('application/json')) {
-  throw new Error('Unexpected response format');
-}
+    try {
+      // Validate inputs
+      if (!transportInput.type || !transportInput.distance || !transportInput.frequency) {
+        throw new Error("Transport inputs are incomplete");
+      }
+      if (!energyInput.type || !energyInput.amount || !energyInput.period) {
+        throw new Error("Energy inputs are incomplete");
+      }
+      if (!dietInput.meatConsumption || !dietInput.dairyConsumption) {
+        throw new Error("Diet inputs are incomplete");
+      }
 
-const result = await response.json();
+      // Get user session for JWT token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("User not authenticated");
+      }
 
-if (!result.success || !result.data?.totalEmissions) {
-  throw new Error('Invalid response from carbon calculator');
-}
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/estimateCarbon`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          transport: transportInput,
+          energy: energyInput,
+          diet: dietInput
+        })
+      });
 
-setCalculatedFootprint(result.data.totalEmissions);
-setShowResults(true);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API Error:', response.status, errorText);
+        throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+      }
 
-  } catch (error) {
-    console.error('Error fetching carbon footprint:', error);
-    alert('Error calculating your footprint. Please try again.');
-  }
-};
-
-  
-  const handleSaveResults = async () => {
-  if (!calculatedFootprint || !user) {
-    alert('User not logged in or footprint not calculated.');
-    return;
-  }
-
-  const date = new Date().toISOString().split('T')[0];
-
-  const transportData: CarbonData = {
-    id: uuidv4(),
-    user_id: user.id,
-    date,
-    category: 'transport',
-    activity: `${transportInput.type} travel`,
-    amount: parseFloat((calculatedFootprint * 0.4).toFixed(2)),
-    details: transportInput
-  };
-
-  const energyData: CarbonData = {
-    id: uuidv4(),
-    user_id: user.id,
-    date,
-    category: 'energy',
-    activity: `${energyInput.type} usage`,
-    amount: parseFloat((calculatedFootprint * 0.35).toFixed(2)),
-    details: energyInput
-  };
-
-  const dietData: CarbonData = {
-    id: uuidv4(),
-    user_id: user.id,
-    date,
-    category: 'diet',
-    activity: `Food consumption`,
-    amount: parseFloat((calculatedFootprint * 0.25).toFixed(2)),
-    details: dietInput
-  };
-
-  const { error } = await supabase.from('carbon_data').insert([
-    transportData,
-    energyData,
-    dietData
-  ]);
-
-  if (error) {
-    console.error('Error saving data to Supabase:', error);
-    alert('Failed to save data. Please try again.');
-    return;
-  }
-
-  // Update UI context and show success
-  addCarbonData(transportData);
-  addCarbonData(energyData);
-  addCarbonData(dietData);
-
-  setShowResults(false);
-  setCalculatedFootprint(null);
-  alert('Your carbon footprint data has been saved!');
-};
-=======
-  
-  const handleCalculate = () => {
-    const footprint = calculateCarbonFootprint(transportInput, energyInput, dietInput);
-    setCalculatedFootprint(footprint);
-    setShowResults(true);
-  };
-  
-  const handleSaveResults = () => {
-    if (calculatedFootprint) {
-      // Transport data
-      const transportData: CarbonData = {
-        id: uuidv4(),
-        date: new Date().toISOString().split('T')[0],
-        category: 'transport',
-        activity: `${transportInput.type} travel`,
-        amount: calculatedFootprint * 0.4, // Approximate transport portion
-        details: transportInput
-      };
+      const result = await response.json();
+      console.log('Edge function response:', result);
       
-      // Energy data
-      const energyData: CarbonData = {
-        id: uuidv4(),
-        date: new Date().toISOString().split('T')[0],
-        category: 'energy',
-        activity: `${energyInput.type} usage`,
-        amount: calculatedFootprint * 0.35, // Approximate energy portion
-        details: energyInput
-      };
-      
-      // Diet data
-      const dietData: CarbonData = {
-        id: uuidv4(),
-        date: new Date().toISOString().split('T')[0],
-        category: 'diet',
-        activity: `Food consumption`,
-        amount: calculatedFootprint * 0.25, // Approximate diet portion
-        details: dietInput
-      };
-      
-      // Add all data
-      addCarbonData(transportData);
-      addCarbonData(energyData);
-      addCarbonData(dietData);
-      
-      // Reset form and show confirmation
-      setShowResults(false);
-      setCalculatedFootprint(null);
-      alert('Your carbon footprint data has been saved!');
+      if (!result.success || !result.data) {
+        throw new Error(result.error || 'Invalid response from carbon calculator');
+      }
+
+      setCalculationResult(result.data);
+      setShowResults(true);
+
+      // Automatically add to local state for immediate UI update
+      if (result.data.entryId) {
+        const carbonData: CarbonData = {
+          id: result.data.entryId,
+          date: new Date().toISOString().split('T')[0],
+          category: 'mixed',
+          activity: 'Carbon footprint calculation',
+          amount: result.data.totalEmissions,
+          details: {
+            transport: transportInput,
+            energy: energyInput,
+            diet: dietInput,
+            breakdown: result.data.breakdown,
+          },
+        };
+        addCarbonData(carbonData);
+      }
+
+    } catch (error) {
+      console.error('Error calculating carbon footprint:', error);
+      alert(`Error calculating your footprint: ${error.message}. Please try again.`);
+    } finally {
+      setIsCalculating(false);
     }
   };
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
-  
+
+  const handleSaveResults = () => {
+    if (calculationResult) {
+      alert(`Your carbon footprint data has been saved! You earned ${calculationResult.pointsEarned || 50} Green Points!`);
+      // Navigate to dashboard instead of just hiding results
+      navigate('/dashboard');
+    }
+  };
+
   const handleAddMore = () => {
+    // Reset all states to allow new calculation
     setShowResults(false);
-    setCalculatedFootprint(null);
+    setCalculationResult(null);
+    setActiveTab('transport');
+    // Reset form inputs to defaults
+    setTransportInput({
+      type: 'car',
+      distance: 20,
+      frequency: 'daily',
+      passengers: 1,
+      fuelType: 'gasoline'
+    });
+    setEnergyInput({
+      type: 'electricity',
+      amount: 300,
+      unit: 'kWh',
+      renewable: false,
+      period: 'monthly'
+    });
+    setDietInput({
+      meatConsumption: 'medium',
+      dairyConsumption: 'medium',
+      localFoodPercentage: 20,
+      wastePercentage: 15
+    });
   };
 
   return (
@@ -316,46 +168,44 @@ setShowResults(true);
           Calculate your carbon footprint by providing information about your lifestyle and habits.
         </p>
       </motion.div>
-      
+
       {!showResults ? (
         <div className="bg-white rounded-xl shadow-sm p-6">
           {/* Tabs */}
           <div className="flex border-b mb-6">
-            <TabButton 
+            <TabButton
               active={activeTab === 'transport'}
               onClick={() => handleTabChange('transport')}
               icon={<Car size={18} />}
               label="Transport"
             />
-            <TabButton 
+            <TabButton
               active={activeTab === 'energy'}
               onClick={() => handleTabChange('energy')}
               icon={<Home size={18} />}
               label="Energy"
             />
-            <TabButton 
+            <TabButton
               active={activeTab === 'diet'}
               onClick={() => handleTabChange('diet')}
               icon={<Utensils size={18} />}
               label="Diet"
             />
           </div>
-          
+
           {/* Form content based on active tab */}
           <div className="py-4">
             {activeTab === 'transport' && (
               <TransportForm input={transportInput} setInput={setTransportInput} />
             )}
-            
             {activeTab === 'energy' && (
               <EnergyForm input={energyInput} setInput={setEnergyInput} />
             )}
-            
             {activeTab === 'diet' && (
               <DietForm input={dietInput} setInput={setDietInput} />
             )}
           </div>
-          
+
           {/* Navigation buttons */}
           <div className="flex justify-between mt-8">
             <button
@@ -367,7 +217,6 @@ setShowResults(true);
             >
               Previous
             </button>
-            
             {activeTab !== 'diet' ? (
               <button
                 onClick={() => {
@@ -381,9 +230,10 @@ setShowResults(true);
             ) : (
               <button
                 onClick={handleCalculate}
-                className="btn btn-primary"
+                disabled={isCalculating || !user}
+                className={`btn btn-primary ${isCalculating ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                Calculate Footprint
+                {isCalculating ? 'Calculating...' : 'Calculate Footprint'}
               </button>
             )}
           </div>
@@ -400,62 +250,64 @@ setShowResults(true);
             <p className="text-gray-600 mb-6">
               Based on the information you provided, here's your estimated carbon footprint:
             </p>
-            
             <div className="bg-gray-50 rounded-xl p-6 mb-8">
               <p className="text-5xl font-bold text-primary mb-2">
-                {calculatedFootprint} <span className="text-2xl">kg CO₂e</span>
+                {calculationResult.totalEmissions} <span className="text-2xl">kg CO₂e</span>
               </p>
               <p className="text-gray-500">per month</p>
             </div>
-            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               <div className="bg-blue-50 rounded-lg p-4">
                 <Car className="w-6 h-6 text-blue-500 mb-2 mx-auto" />
                 <p className="font-medium">Transport</p>
-                <p className="text-gray-600 text-sm">~{(calculatedFootprint! * 0.4).toFixed(1)} kg CO₂e</p>
+                <p className="text-gray-600 text-sm">{calculationResult.breakdown.transport} kg CO₂e</p>
               </div>
-              
               <div className="bg-orange-50 rounded-lg p-4">
                 <Home className="w-6 h-6 text-orange-500 mb-2 mx-auto" />
                 <p className="font-medium">Energy</p>
-                <p className="text-gray-600 text-sm">~{(calculatedFootprint! * 0.35).toFixed(1)} kg CO₂e</p>
+                <p className="text-gray-600 text-sm">{calculationResult.breakdown.energy} kg CO₂e</p>
               </div>
-              
               <div className="bg-green-50 rounded-lg p-4">
                 <Utensils className="w-6 h-6 text-green-500 mb-2 mx-auto" />
                 <p className="font-medium">Diet</p>
-                <p className="text-gray-600 text-sm">~{(calculatedFootprint! * 0.25).toFixed(1)} kg CO₂e</p>
+                <p className="text-gray-600 text-sm">{calculationResult.breakdown.diet} kg CO₂e</p>
               </div>
             </div>
+            
+            {calculationResult.pointsEarned && (
+              <div className="bg-primary-light/10 rounded-lg p-4 mb-6">
+                <p className="text-primary font-medium">
+                  🎉 You earned {calculationResult.pointsEarned} Green Points for tracking your footprint!
+                </p>
+              </div>
+            )}
             
             <div className="bg-primary-light/10 rounded-lg p-4 mb-6 flex items-start">
               <Info className="w-5 h-5 text-primary mt-0.5 mr-3 flex-shrink-0" />
               <p className="text-sm text-left">
-                The average carbon footprint is approximately 500 kg CO₂e per month. 
-                Your footprint is {calculatedFootprint! < 500 ? 'below' : 'above'} average. 
+                The average carbon footprint is approximately 500 kg CO₂e per month.
+                Your footprint is {calculationResult.totalEmissions < 500 ? 'below' : 'above'} average.
                 Visit the dashboard for personalized recommendations on how to reduce your impact.
               </p>
             </div>
           </div>
-          
           <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
             <button
               onClick={handleSaveResults}
               className="btn btn-primary"
             >
-              <Save size={16} className="mr-2" /> Save Results
+              <Save size={16} className="mr-2" /> Continue to Dashboard
             </button>
-            
             <button
               onClick={handleAddMore}
               className="btn btn-outline"
             >
-              <PlusCircle size={16} className="mr-2" /> Add More Data
+              <PlusCircle size={16} className="mr-2" /> Calculate Again
             </button>
           </div>
         </motion.div>
       )}
-      
+
       {/* Additional information */}
       {!showResults && (
         <div className="mt-8 bg-primary-light/10 rounded-xl p-6">
@@ -463,12 +315,12 @@ setShowResults(true);
             <Info className="w-5 h-5 mr-2" /> About Carbon Footprint Calculation
           </h3>
           <p className="text-sm text-gray-700 mb-4">
-            This calculator provides an estimate of your carbon footprint based on your lifestyle choices. 
+            This calculator provides an estimate of your carbon footprint based on your lifestyle choices.
             For the most accurate results, please provide detailed information in all sections.
           </p>
           <p className="text-sm text-gray-700">
             The results are calculated using industry-standard emission factors and methodologies.
-            In a full implementation, this would connect to the Carbon Interface API for precise calculations.
+            Your data is securely stored and you'll earn Green Points for tracking your footprint!
           </p>
         </div>
       )}
@@ -476,276 +328,205 @@ setShowResults(true);
   );
 };
 
-interface TabButtonProps {
-  active: boolean;
-  onClick: () => void;
-  icon: React.ReactNode;
-  label: string;
-}
-
-const TabButton: React.FC<TabButtonProps> = ({ active, onClick, icon, label }) => {
-  return (
+// TabButton component
+const TabButton: React.FC<{ active: boolean; onClick: () => void; icon: React.ReactNode; label: string }> =
+  ({ active, onClick, icon, label }) => (
     <button
+      className={`flex items-center px-4 py-2 ${active ? 'border-b-2 border-primary text-primary' : 'text-gray-600'}`}
       onClick={onClick}
-      className={`flex items-center px-4 py-3 border-b-2 font-medium transition-colors ${
-        active 
-          ? 'border-primary text-primary' 
-          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-      }`}
     >
-      <span className="mr-2">{icon}</span>
-      {label}
+      {icon}
+      <span className="ml-2">{label}</span>
     </button>
   );
-};
 
-interface TransportFormProps {
-  input: TransportInput;
-  setInput: React.Dispatch<React.SetStateAction<TransportInput>>;
-}
-
-const TransportForm: React.FC<TransportFormProps> = ({ input, setInput }) => {
+// TransportForm component
+const TransportForm: React.FC<{ input: TransportInput; setInput: (input: TransportInput) => void }> = ({ input, setInput }) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Transport Type
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Transport Type</label>
         <select
           value={input.type}
-          onChange={(e) => setInput({ ...input, type: e.target.value as any })}
-          className="input w-full"
+          onChange={(e) => setInput({ ...input, type: e.target.value })}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
         >
           <option value="car">Car</option>
           <option value="bus">Bus</option>
           <option value="train">Train</option>
           <option value="plane">Plane</option>
-          <option value="bike">Bicycle</option>
-          <option value="walk">Walking</option>
+          <option value="bike">Bike</option>
+          <option value="walk">Walk</option>
         </select>
       </div>
-      
-      {input.type === 'car' && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Fuel Type
-          </label>
-          <select
-            value={input.fuelType}
-            onChange={(e) => setInput({ ...input, fuelType: e.target.value as any })}
-            className="input w-full"
-          >
-            <option value="gasoline">Gasoline</option>
-            <option value="diesel">Diesel</option>
-            <option value="electric">Electric</option>
-            <option value="hybrid">Hybrid</option>
-          </select>
-        </div>
-      )}
-      
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Distance (km)
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Distance (km)</label>
         <input
           type="number"
           value={input.distance}
-          onChange={(e) => setInput({ ...input, distance: parseFloat(e.target.value) })}
+          onChange={(e) => setInput({ ...input, distance: parseFloat(e.target.value) || 0 })}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
           min="0"
-          className="input w-full"
         />
       </div>
-      
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Frequency
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Frequency</label>
         <select
           value={input.frequency}
-          onChange={(e) => setInput({ ...input, frequency: e.target.value as any })}
-          className="input w-full"
+          onChange={(e) => setInput({ ...input, frequency: e.target.value })}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
         >
           <option value="daily">Daily</option>
           <option value="weekly">Weekly</option>
           <option value="monthly">Monthly</option>
-          <option value="once">One time</option>
+          <option value="once">Once</option>
         </select>
       </div>
-      
-      {(input.type === 'car' || input.type === 'bus') && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Number of Passengers (including you)
-          </label>
-          <input
-            type="number"
-            value={input.passengers}
-            onChange={(e) => setInput({ ...input, passengers: parseInt(e.target.value) })}
-            min="1"
-            className="input w-full"
-          />
-        </div>
+      {input.type === 'car' && (
+        <>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Fuel Type</label>
+            <select
+              value={input.fuelType || 'gasoline'}
+              onChange={(e) => setInput({ ...input, fuelType: e.target.value })}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+            >
+              <option value="gasoline">Gasoline</option>
+              <option value="diesel">Diesel</option>
+              <option value="electric">Electric</option>
+              <option value="hybrid">Hybrid</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Number of Passengers</label>
+            <input
+              type="number"
+              value={input.passengers || 1}
+              onChange={(e) => setInput({ ...input, passengers: parseInt(e.target.value) || 1 })}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+              min="1"
+            />
+          </div>
+        </>
       )}
     </div>
   );
 };
 
-interface EnergyFormProps {
-  input: EnergyInput;
-  setInput: React.Dispatch<React.SetStateAction<EnergyInput>>;
-}
-
-const EnergyForm: React.FC<EnergyFormProps> = ({ input, setInput }) => {
+// EnergyForm component
+const EnergyForm: React.FC<{ input: EnergyInput; setInput: (input: EnergyInput) => void }> = ({ input, setInput }) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Energy Type
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Energy Type</label>
         <select
           value={input.type}
-          onChange={(e) => setInput({ ...input, type: e.target.value as any })}
-          className="input w-full"
+          onChange={(e) => setInput({ ...input, type: e.target.value })}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
         >
           <option value="electricity">Electricity</option>
           <option value="heating">Heating</option>
           <option value="cooling">Cooling</option>
         </select>
       </div>
-      
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Amount
-        </label>
-        <div className="flex">
-          <input
-            type="number"
-            value={input.amount}
-            onChange={(e) => setInput({ ...input, amount: parseFloat(e.target.value) })}
-            min="0"
-            className="input rounded-r-none w-full"
-          />
-          <select
-            value={input.unit}
-            onChange={(e) => setInput({ ...input, unit: e.target.value as any })}
-            className="input rounded-l-none border-l-0"
-          >
-            <option value="kWh">kWh</option>
-            <option value="therm">therm</option>
-            <option value="MJ">MJ</option>
-          </select>
-        </div>
+        <label className="block text-sm font-medium text-gray-700">Amount</label>
+        <input
+          type="number"
+          value={input.amount}
+          onChange={(e) => setInput({ ...input, amount: parseFloat(e.target.value) || 0 })}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          min="0"
+        />
       </div>
-      
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Time Period
+        <label className="block text-sm font-medium text-gray-700">Unit</label>
+        <select
+          value={input.unit}
+          onChange={(e) => setInput({ ...input, unit: e.target.value })}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+        >
+          <option value="kWh">kWh</option>
+        </select>
+      </div>
+      <div>
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            checked={input.renewable}
+            onChange={(e) => setInput({ ...input, renewable: e.target.checked })}
+            className="mr-2 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+          />
+          <span className="text-sm font-medium text-gray-700">Renewable Source</span>
         </label>
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Period</label>
         <select
           value={input.period}
-          onChange={(e) => setInput({ ...input, period: e.target.value as any })}
-          className="input w-full"
+          onChange={(e) => setInput({ ...input, period: e.target.value })}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
         >
           <option value="daily">Daily</option>
           <option value="weekly">Weekly</option>
           <option value="monthly">Monthly</option>
         </select>
       </div>
-      
-      <div className="flex items-center">
-        <input
-          type="checkbox"
-          id="renewable"
-          checked={input.renewable}
-          onChange={(e) => setInput({ ...input, renewable: e.target.checked })}
-          className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
-        />
-        <label htmlFor="renewable" className="ml-2 block text-sm text-gray-700">
-          I use renewable energy sources
-        </label>
-      </div>
     </div>
   );
 };
 
-interface DietFormProps {
-  input: DietInput;
-  setInput: React.Dispatch<React.SetStateAction<DietInput>>;
-}
-
-const DietForm: React.FC<DietFormProps> = ({ input, setInput }) => {
+// DietForm component
+const DietForm: React.FC<{ input: DietInput; setInput: (input: DietInput) => void }> = ({ input, setInput }) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Meat Consumption
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Meat Consumption</label>
         <select
           value={input.meatConsumption}
-          onChange={(e) => setInput({ ...input, meatConsumption: e.target.value as any })}
-          className="input w-full"
+          onChange={(e) => setInput({ ...input, meatConsumption: e.target.value })}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
         >
-          <option value="high">High (daily)</option>
-          <option value="medium">Medium (3-5 times a week)</option>
-          <option value="low">Low (once a week or less)</option>
-          <option value="none">None (vegetarian/vegan)</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+          <option value="none">None</option>
         </select>
       </div>
-      
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Dairy Consumption
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Dairy Consumption</label>
         <select
           value={input.dairyConsumption}
-          onChange={(e) => setInput({ ...input, dairyConsumption: e.target.value as any })}
-          className="input w-full"
+          onChange={(e) => setInput({ ...input, dairyConsumption: e.target.value })}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
         >
-          <option value="high">High (daily, multiple servings)</option>
-          <option value="medium">Medium (daily, moderate)</option>
-          <option value="low">Low (occasionally)</option>
-          <option value="none">None (vegan)</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+          <option value="none">None</option>
         </select>
       </div>
-      
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Local Food Percentage (%)
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Local Food Percentage (%)</label>
         <input
-          type="range"
+          type="number"
+          value={input.localFoodPercentage}
+          onChange={(e) => setInput({ ...input, localFoodPercentage: parseFloat(e.target.value) || 0 })}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
           min="0"
           max="100"
-          step="5"
-          value={input.localFoodPercentage}
-          onChange={(e) => setInput({ ...input, localFoodPercentage: parseInt(e.target.value) })}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
         />
-        <div className="flex justify-between text-xs text-gray-500 mt-1">
-          <span>0% (All imported)</span>
-          <span>{input.localFoodPercentage}%</span>
-          <span>100% (All local)</span>
-        </div>
       </div>
-      
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Food Waste Percentage (%)
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Waste Percentage (%)</label>
         <input
-          type="range"
-          min="0"
-          max="50"
-          step="5"
+          type="number"
           value={input.wastePercentage}
-          onChange={(e) => setInput({ ...input, wastePercentage: parseInt(e.target.value) })}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+          onChange={(e) => setInput({ ...input, wastePercentage: parseFloat(e.target.value) || 0 })}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          min="0"
+          max="100"
         />
-        <div className="flex justify-between text-xs text-gray-500 mt-1">
-          <span>0% (No waste)</span>
-          <span>{input.wastePercentage}%</span>
-          <span>50% (High waste)</span>
-        </div>
       </div>
     </div>
   );

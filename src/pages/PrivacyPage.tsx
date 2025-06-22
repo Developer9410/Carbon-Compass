@@ -250,13 +250,8 @@ const PrivacyPage: React.FC = () => {
           
           <div className="space-y-4">
             <p className="text-gray-700">
-<<<<<<< HEAD
               Carbon Compass is operated from the India. If you're accessing our service from outside the India, 
               please be aware that your information may be transferred to, stored, and processed in the India.
-=======
-              Carbon Compass is operated from the United States. If you're accessing our service from outside the US, 
-              please be aware that your information may be transferred to, stored, and processed in the United States.
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -290,17 +285,6 @@ const PrivacyPage: React.FC = () => {
               <p className="text-sm text-gray-700">Response time: Within 48 hours</p>
             </div>
             
-<<<<<<< HEAD
-=======
-            <div>
-              <h4 className="font-semibold mb-2">Mailing Address</h4>
-              <p className="text-sm text-gray-700">
-                Carbon Compass Privacy Team<br />
-                123 Green Street, Suite 400<br />
-                San Francisco, CA 94111
-              </p>
-            </div>
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
           </div>
           
           <div className="mt-6 pt-6 border-t border-gray-200">

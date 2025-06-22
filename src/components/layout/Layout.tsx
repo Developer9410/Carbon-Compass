@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import React, { useState } from 'react';
-=======
-import React, { useState, useEffect } from 'react';
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
 import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
@@ -12,22 +8,9 @@ import { useApp } from '../../context/AppContext';
 
 const Layout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-<<<<<<< HEAD
   const { loading } = useApp();
   const location = useLocation();
 
-=======
-  const { isLoggedIn, setIsLoggedIn } = useApp();
-  const location = useLocation();
-
-  // Demo login for prototype
-  useEffect(() => {
-    if (!isLoggedIn) {
-      setIsLoggedIn(true);
-    }
-  }, [isLoggedIn, setIsLoggedIn]);
-
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -54,7 +37,6 @@ const Layout: React.FC = () => {
     duration: 0.4,
   };
 
-<<<<<<< HEAD
   // Show loading spinner while checking auth state
   if (loading) {
     return (
@@ -64,8 +46,6 @@ const Layout: React.FC = () => {
     );
   }
 
-=======
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar toggleSidebar={toggleSidebar} />

@@ -7,10 +7,14 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
 
-const supabase = createClient(
-  Deno.env.get('SUPABASE_URL') ?? '',
-  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-);
+const supabaseUrl = Deno.env.get('SUPABASE_URL');
+const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+if (!supabaseUrl || !supabaseServiceRoleKey) {
+  throw new Error('Supabase environment variables are not set.');
+}
+
+const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
 interface TransportInput {
   type: string;
@@ -41,7 +45,7 @@ interface RequestBody {
   diet: DietInput;
 }
 
-// Emission factors (kg CO2e)
+// Emission factors (kg CO2e per unit)
 const EMISSION_FACTORS = {
   transport: {
     car: { gasoline: 0.2, diesel: 0.22, electric: 0.05, hybrid: 0.12 },
@@ -49,46 +53,39 @@ const EMISSION_FACTORS = {
     train: 0.04,
     plane: 0.25,
     bike: 0,
-    walk: 0
+    walk: 0,
   },
   energy: {
     electricity: 0.4, // kg CO2e per kWh
     heating: 0.2,
-    cooling: 0.3
+    cooling: 0.3,
   },
   diet: {
-    meat: { high: 3.3, medium: 2.5, low: 1.7, none: 1.0 },
-    dairy: { high: 1.5, medium: 1.0, low: 0.5, none: 0.1 }
-  }
+    meat: { high: 3.3, medium: 2.5, low: 1.7, none: 1.0 }, // kg CO2e per day
+    dairy: { high: 1.5, medium: 1.0, low: 0.5, none: 0.1 },
+  },
 };
 
-const FREQUENCY_MULTIPLIERS = {
-  daily: 30,
-  weekly: 4,
-  monthly: 1,
-  once: 1
-};
-
-const PERIOD_MULTIPLIERS = {
-  daily: 30,
-  weekly: 4,
-  monthly: 1
-};
+const FREQUENCY_MULTIPLIERS = { daily: 30, weekly: 4, monthly: 1, once: 1 };
+const PERIOD_MULTIPLIERS = { daily: 30, weekly: 4, monthly: 1 };
 
 function calculateTransportEmissions(transport: TransportInput): number {
-  const { type, distance, frequency, passengers = 1, fuelType = 'gasoline' } = transport;
-  
+  const { type, distance, frequency, passengers = 1, fuelType } = transport;
   let factor = 0;
-  if (type === 'car' && EMISSION_FACTORS.transport.car[fuelType as keyof typeof EMISSION_FACTORS.transport.car]) {
+
+  if (type === 'car') {
+    if (!fuelType || !EMISSION_FACTORS.transport.car[fuelType as keyof typeof EMISSION_FACTORS.transport.car]) {
+      throw new Error(`Invalid fuel type for car: ${fuelType}. Expected one of: gasoline, diesel, electric, hybrid.`);
+    }
     factor = EMISSION_FACTORS.transport.car[fuelType as keyof typeof EMISSION_FACTORS.transport.car];
   } else if (EMISSION_FACTORS.transport[type as keyof typeof EMISSION_FACTORS.transport]) {
     factor = EMISSION_FACTORS.transport[type as keyof typeof EMISSION_FACTORS.transport] as number;
+  } else {
+    throw new Error(`Invalid transport type: ${type}. Expected one of: car, bus, train, plane, bike, walk.`);
   }
-  
+
   // Adjust for passengers (carpooling reduces per-person emissions)
-  if (passengers > 1) {
-    factor /= passengers;
-  }
+  if (passengers > 1) factor /= passengers;
   
   const multiplier = FREQUENCY_MULTIPLIERS[frequency as keyof typeof FREQUENCY_MULTIPLIERS] || 1;
   return factor * distance * multiplier;
@@ -96,33 +93,41 @@ function calculateTransportEmissions(transport: TransportInput): number {
 
 function calculateEnergyEmissions(energy: EnergyInput): number {
   const { type, amount, renewable, period } = energy;
+  const factor = EMISSION_FACTORS.energy[type as keyof typeof EMISSION_FACTORS.energy];
   
-  let factor = EMISSION_FACTORS.energy[type as keyof typeof EMISSION_FACTORS.energy] || 0;
-  
-  // Adjust for renewable energy
-  if (renewable) {
-    factor *= 0.2; // 80% reduction for renewable
+  if (!factor) {
+    throw new Error(`Invalid energy type: ${type}. Expected one of: electricity, heating, cooling.`);
   }
   
+  // Renewable energy has 80% lower emissions
+  const adjustedFactor = renewable ? factor * 0.2 : factor;
   const multiplier = PERIOD_MULTIPLIERS[period as keyof typeof PERIOD_MULTIPLIERS] || 1;
-  return factor * amount * multiplier;
+  
+  return adjustedFactor * amount * multiplier;
 }
 
 function calculateDietEmissions(diet: DietInput): number {
   const { meatConsumption, dairyConsumption, localFoodPercentage, wastePercentage } = diet;
   
-  const meatFactor = EMISSION_FACTORS.diet.meat[meatConsumption as keyof typeof EMISSION_FACTORS.diet.meat] || 0;
-  const dairyFactor = EMISSION_FACTORS.diet.dairy[dairyConsumption as keyof typeof EMISSION_FACTORS.diet.dairy] || 0;
+  const meatFactor = EMISSION_FACTORS.diet.meat[meatConsumption as keyof typeof EMISSION_FACTORS.diet.meat];
+  const dairyFactor = EMISSION_FACTORS.diet.dairy[dairyConsumption as keyof typeof EMISSION_FACTORS.diet.dairy];
+  
+  if (!meatFactor) {
+    throw new Error(`Invalid meat consumption level: ${meatConsumption}. Expected: high, medium, low, none.`);
+  }
+  if (!dairyFactor) {
+    throw new Error(`Invalid dairy consumption level: ${dairyConsumption}. Expected: high, medium, low, none.`);
+  }
   
   let total = meatFactor + dairyFactor;
   
-  // Adjust for local food (up to 20% reduction)
-  total *= (1 - (localFoodPercentage * 0.2 / 100));
+  // Local food reduces emissions by up to 20%
+  total *= (1 - (localFoodPercentage / 100) * 0.2);
   
-  // Adjust for waste (up to 10% increase)
-  total *= (1 + (wastePercentage * 0.1 / 100));
+  // Food waste increases emissions
+  total *= (1 + (wastePercentage / 100) * 0.1);
   
-  // Monthly total
+  // Convert daily to monthly
   return total * 30;
 }
 
@@ -132,7 +137,7 @@ serve(async (req: Request) => {
   }
 
   try {
-    // Get user from auth header
+    // Verify authentication
     const authHeader = req.headers.get('authorization');
     if (!authHeader?.startsWith('Bearer ')) {
       return new Response(
@@ -141,60 +146,121 @@ serve(async (req: Request) => {
       );
     }
 
+    const token = authHeader.replace('Bearer ', '');
+    
+    // Get user from token
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    
+    if (userError || !user) {
+      console.error('Auth error:', userError);
+      return new Response(
+        JSON.stringify({ success: false, error: 'Invalid token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const userId = user.id;
+
     // Parse request body
     const body: RequestBody = await req.json();
     const { transport, energy, diet } = body;
 
-    // Calculate emissions for each category
+    // Validate required fields
+    if (!transport?.type || !transport?.distance || !transport?.frequency ||
+        !energy?.type || !energy?.amount || !energy?.period ||
+        !diet?.meatConsumption || !diet?.dairyConsumption) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Incomplete input data' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Calculate emissions
     const transportEmissions = calculateTransportEmissions(transport);
     const energyEmissions = calculateEnergyEmissions(energy);
     const dietEmissions = calculateDietEmissions(diet);
-    const otherEmissions = 0; // Placeholder for other categories
-
+    const otherEmissions = 0; // Placeholder for future categories
     const totalEmissions = transportEmissions + energyEmissions + dietEmissions + otherEmissions;
 
-    // Store in database
-    const { data: entry, error } = await supabase
+    // Save to database
+    const { data: carbonEntry, error: insertError } = await supabase
       .from('carbon_data')
       .insert({
-        user_id: 'demo-user', // In real app, extract from JWT
-        transport_emissions: transportEmissions,
-        energy_emissions: energyEmissions,
-        diet_emissions: dietEmissions,
-        other_emissions: otherEmissions,
-        total_emissions: totalEmissions,
-        calculation_data: { transport, energy, diet }
+        user_id: userId,
+        date: new Date().toISOString().split('T')[0],
+        category: 'mixed',
+        activity: 'Carbon footprint calculation',
+        amount: totalEmissions,
+        details: { transport, energy, diet, breakdown: { transport: transportEmissions, energy: energyEmissions, diet: dietEmissions, other: otherEmissions } },
       })
-      .select('id, created_at')
+      .select('id')
       .single();
 
-    if (error) {
-      console.error('Database error:', error);
-      // Continue without storing for demo purposes
+    if (insertError) {
+      console.error('Database insert error:', insertError);
+      throw insertError;
+    }
+
+    // Award points for carbon tracking
+    try {
+      const { error: pointsError } = await supabase
+        .from('point_transactions')
+        .insert({
+          user_id: userId,
+          points: 50,
+          action_type: 'carbon_entry',
+          description: 'Calculated carbon footprint',
+          carbon_entry_id: carbonEntry.id,
+        });
+
+      if (pointsError) {
+        console.error('Points award error:', pointsError);
+      } else {
+        // Update user's total points
+        const { data: currentUser } = await supabase
+          .from('users')
+          .select('points')
+          .eq('id', userId)
+          .single();
+
+        if (currentUser) {
+          await supabase
+            .from('users')
+            .update({ points: (currentUser.points || 0) + 50 })
+            .eq('id', userId);
+        }
+      }
+    } catch (pointsError) {
+      console.error('Points system error:', pointsError);
+      // Don't fail the main operation if points fail
     }
 
     return new Response(
       JSON.stringify({
         success: true,
         data: {
-          totalEmissions,
+          entryId: carbonEntry.id,
+          totalEmissions: Math.round(totalEmissions * 100) / 100,
           breakdown: {
-            transport: transportEmissions,
-            energy: energyEmissions,
-            diet: dietEmissions,
-            other: otherEmissions
+            transport: Math.round(transportEmissions * 100) / 100,
+            energy: Math.round(energyEmissions * 100) / 100,
+            diet: Math.round(dietEmissions * 100) / 100,
+            other: Math.round(otherEmissions * 100) / 100,
           },
-          entryId: entry?.id,
-          timestamp: entry?.created_at || new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+          pointsEarned: 50,
+        },
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Carbon estimation error:', error);
-    
+    console.error('Carbon calculation error:', error);
     return new Response(
-      JSON.stringify({ success: false, error: 'Internal server error' }),
+      JSON.stringify({ 
+        success: false, 
+        error: error.message || 'Internal server error',
+        details: error.toString()
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

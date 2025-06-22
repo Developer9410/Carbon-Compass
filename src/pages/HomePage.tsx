@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-<<<<<<< HEAD
 import { Link, useNavigate } from 'react-router-dom';
 import { Calculator, BarChart2, Leaf, Users, ArrowRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -9,12 +8,6 @@ const HomePage: React.FC = () => {
   const { isLoggedIn } = useApp();
   const navigate = useNavigate();
 
-=======
-import { Link } from 'react-router-dom';
-import { Calculator, BarChart2, Leaf, Users, ArrowRight } from 'lucide-react';
-
-const HomePage: React.FC = () => {
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -36,7 +29,6 @@ const HomePage: React.FC = () => {
     }
   };
 
-<<<<<<< HEAD
   const handleGetStarted = () => {
     if (isLoggedIn) {
       navigate('/calculator');
@@ -49,8 +41,6 @@ const HomePage: React.FC = () => {
     navigate('/resources');
   };
 
-=======
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
   return (
     <div className="container mx-auto pb-12">
       {/* Hero Section */}
@@ -70,11 +60,7 @@ const HomePage: React.FC = () => {
         
         <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
           <motion.h1 
-<<<<<<< HEAD
             className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-gray-900"
-=======
-            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6"
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -83,11 +69,7 @@ const HomePage: React.FC = () => {
           </motion.h1>
           
           <motion.p 
-<<<<<<< HEAD
             className="text-lg md:text-xl text-gray-800 mb-8 max-w-3xl mx-auto"
-=======
-            className="text-lg md:text-xl text-gray-600 mb-8 max-w-3xl mx-auto"
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -101,7 +83,6 @@ const HomePage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-<<<<<<< HEAD
             {isLoggedIn ? (
               <>
                 <Link to="/dashboard" className="btn btn-primary px-8 py-3 text-base sm:text-lg">
@@ -127,20 +108,6 @@ const HomePage: React.FC = () => {
                 </button>
               </>
             )}
-=======
-            <Link 
-              to="/calculator" 
-              className="btn btn-primary px-8 py-3 text-base sm:text-lg"
-            >
-              Calculate Your Footprint
-            </Link>
-            <Link 
-              to="/dashboard" 
-              className="btn btn-outline px-8 py-3 text-base sm:text-lg"
-            >
-              View Demo Dashboard
-            </Link>
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
           </motion.div>
         </div>
       </section>
@@ -148,13 +115,8 @@ const HomePage: React.FC = () => {
       {/* Features Section */}
       <section className="py-16">
         <div className="text-center mb-12">
-<<<<<<< HEAD
           <h2 className="text-3xl font-bold mb-4 text-gray-900">How Carbon Compass Works</h2>
           <p className="text-gray-800 max-w-2xl mx-auto">
-=======
-          <h2 className="text-3xl font-bold mb-4">How Carbon Compass Works</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
             Our comprehensive platform helps you understand, track, and reduce your environmental impact through a variety of powerful features.
           </p>
         </div>
@@ -211,17 +173,10 @@ const HomePage: React.FC = () => {
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
               >
-<<<<<<< HEAD
                 <h2 className="text-3xl font-bold mb-4 text-gray-900">
                   AI-Powered <span className="text-primary">Personalized Recommendations</span>
                 </h2>
                 <p className="text-gray-800 mb-6">
-=======
-                <h2 className="text-3xl font-bold mb-4">
-                  AI-Powered <span className="text-primary">Personalized Recommendations</span>
-                </h2>
-                <p className="text-gray-600 mb-6">
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
                   Our advanced AI engine analyzes your carbon footprint data to provide tailored suggestions that make the biggest impact based on your lifestyle and habits.
                 </p>
                 
@@ -240,18 +195,12 @@ const HomePage: React.FC = () => {
                   />
                 </div>
                 
-<<<<<<< HEAD
                 <button 
                   onClick={handleGetStarted}
                   className="btn btn-primary inline-flex items-center"
                 >
                   Get Started <ArrowRight size={16} className="ml-2" />
                 </button>
-=======
-                <Link to="/calculator" className="btn btn-primary inline-flex items-center">
-                  Get Started <ArrowRight size={16} className="ml-2" />
-                </Link>
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
               </motion.div>
             </div>
             
@@ -285,13 +234,8 @@ const HomePage: React.FC = () => {
       {/* Community and Gamification */}
       <section className="py-16">
         <div className="text-center mb-12">
-<<<<<<< HEAD
           <h2 className="text-3xl font-bold mb-4 text-gray-900">Join Our Growing Community</h2>
           <p className="text-gray-800 max-w-2xl mx-auto">
-=======
-          <h2 className="text-3xl font-bold mb-4">Join Our Growing Community</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
             Connect with like-minded individuals, participate in challenges, and earn rewards for your sustainable actions.
           </p>
         </div>
@@ -309,13 +253,8 @@ const HomePage: React.FC = () => {
               alt="Community Challenges" 
               className="w-full h-48 object-cover rounded-lg mb-4"
             />
-<<<<<<< HEAD
             <h3 className="text-xl font-semibold mb-2 text-gray-900">Group Challenges</h3>
             <p className="text-gray-800 mb-4">
-=======
-            <h3 className="text-xl font-semibold mb-2">Group Challenges</h3>
-            <p className="text-gray-600 mb-4">
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
               Participate in team challenges with friends, family, or coworkers to multiply your environmental impact.
             </p>
             <Link to="/challenges" className="text-primary font-medium flex items-center hover:underline">
@@ -335,19 +274,11 @@ const HomePage: React.FC = () => {
               alt="Green Points" 
               className="w-full h-48 object-cover rounded-lg mb-4"
             />
-<<<<<<< HEAD
             <h3 className="text-xl font-semibold mb-2 text-gray-900">Green Points & Rewards</h3>
             <p className="text-gray-800 mb-4">
               Earn points for sustainable actions and redeem them for eco-friendly rewards or donate to environmental causes.
             </p>
             <Link to="/rewards" className="text-primary font-medium flex items-center hover:underline">
-=======
-            <h3 className="text-xl font-semibold mb-2">Green Points & Rewards</h3>
-            <p className="text-gray-600 mb-4">
-              Earn points for sustainable actions and redeem them for eco-friendly rewards or donate to environmental causes.
-            </p>
-            <Link to="/profile" className="text-primary font-medium flex items-center hover:underline">
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
               View Rewards <ArrowRight size={16} className="ml-1" />
             </Link>
           </motion.div>
@@ -364,13 +295,8 @@ const HomePage: React.FC = () => {
               alt="Community Feed" 
               className="w-full h-48 object-cover rounded-lg mb-4"
             />
-<<<<<<< HEAD
             <h3 className="text-xl font-semibold mb-2 text-gray-900">Social Impact Feed</h3>
             <p className="text-gray-800 mb-4">
-=======
-            <h3 className="text-xl font-semibold mb-2">Social Impact Feed</h3>
-            <p className="text-gray-600 mb-4">
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
               Share your sustainability journey, get inspired by others, and celebrate collective achievements.
             </p>
             <Link to="/community" className="text-primary font-medium flex items-center hover:underline">
@@ -383,7 +309,6 @@ const HomePage: React.FC = () => {
       {/* Call to Action */}
       <section className="py-16 text-center">
         <div className="max-w-3xl mx-auto px-4">
-<<<<<<< HEAD
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">
             Ready to Reduce Your Carbon Footprint?
           </h2>
@@ -404,20 +329,6 @@ const HomePage: React.FC = () => {
               </Link>
             </div>
           )}
-=======
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Reduce Your Carbon Footprint?
-          </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Start your journey to a more sustainable lifestyle today.
-          </p>
-          <Link 
-            to="/calculator" 
-            className="btn btn-primary px-8 py-3 text-lg"
-          >
-            Calculate Your Footprint
-          </Link>
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
         </div>
       </section>
     </div>
@@ -441,13 +352,8 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description, lin
       <div className="mb-4 p-3 rounded-full bg-primary-light/20">
         {icon}
       </div>
-<<<<<<< HEAD
       <h3 className="text-xl font-semibold mb-2 text-gray-900">{title}</h3>
       <p className="text-gray-800 mb-4">{description}</p>
-=======
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-gray-600 mb-4">{description}</p>
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
       <Link 
         to={link} 
         className="mt-auto text-primary font-medium flex items-center hover:underline"
@@ -472,13 +378,8 @@ const RecommendationItem: React.FC<RecommendationItemProps> = ({ title, descript
         </div>
       </div>
       <div className="ml-3">
-<<<<<<< HEAD
         <h4 className="font-medium text-gray-900">{title}</h4>
         <p className="text-sm text-gray-800">{description}</p>
-=======
-        <h4 className="font-medium">{title}</h4>
-        <p className="text-sm text-gray-600">{description}</p>
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
       </div>
     </div>
   );

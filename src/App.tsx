@@ -21,13 +21,10 @@ import ContactPage from './pages/ContactPage';
 import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
 import ResourceDetailPage from './pages/ResourceDetailPage';
-<<<<<<< HEAD
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import NotificationsPage from './pages/NotificationsPage';
 import PrivateRoute from './components/auth/PrivateRoute'; 
-=======
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
 
 function App() {
   return (
@@ -35,7 +32,6 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
-<<<<<<< HEAD
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="calculator" element={<CalculatorPage />} />
@@ -49,17 +45,6 @@ function App() {
           <Route path="resources" element={<ResourcesPage />} />
           <Route path="resources/:id" element={<ResourceDetailPage />} />
           <Route path="challenges" element={<ChallengesPage />} />
-=======
-          <Route path="calculator" element={<CalculatorPage />} />
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="offset" element={<OffsetPage />} />
-          <Route path="community" element={<CommunityPage />} />
-          <Route path="resources" element={<ResourcesPage />} />
-          <Route path="resources/:id" element={<ResourceDetailPage />} />
-          <Route path="challenges" element={<ChallengesPage />} />
-          <Route path="profile" element={<ProfilePage />} />
-          <Route path="rewards" element={<RewardsPage />} />
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
           <Route path="blog" element={<BlogPage />} />
           <Route path="climate-science" element={<ClimateSciencePage />} />
           <Route path="offset-guide" element={<OffsetGuidePage />} />

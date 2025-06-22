@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, User, Bell, Compass, X } from 'lucide-react';
-=======
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, Bell, Sun, Moon, Compass } from 'lucide-react';
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
 import { useApp } from '../../context/AppContext';
 import CarbonNeutralBadge from '../ui/CarbonNeutralBadge';
 
@@ -15,7 +10,6 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
   const [scrolled, setScrolled] = useState(false);
-<<<<<<< HEAD
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const { user, totalFootprint, isLoggedIn, logout, setIsLoggedIn } = useApp();
 
@@ -46,12 +40,6 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
       read: true
     }
   ]);
-=======
-  const [darkMode, setDarkMode] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const { user, totalFootprint } = useApp();
-  const location = useLocation();
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
 
   // Mock offset data - in a real app this would come from the database
   const totalOffsetAmount = user?.offsetHistory?.reduce((sum, offset) => sum + offset.amount, 0) || 0;
@@ -72,7 +60,6 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-<<<<<<< HEAD
  const handleLogout = async () => {
   try {
     await logout();               // Calls supabase.auth.signOut() and clears user in context
@@ -106,14 +93,6 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-=======
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    // In a real app, this would apply dark mode
-  };
-
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
   return (
     <nav 
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
@@ -133,16 +112,11 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
             
             <Link to="/" className="flex items-center space-x-2">
               <Compass className="w-8 h-8 text-primary" />
-<<<<<<< HEAD
               <span className="text-xl font-bold text-gray-900">Carbon Compass</span>
-=======
-              <span className="text-xl font-bold text-foreground">Carbon Compass</span>
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-<<<<<<< HEAD
           {isLoggedIn && (
             <div className="hidden md:flex items-center space-x-1">
               <NavLink to="/calculator" current={location.pathname === '/calculator'}>
@@ -159,22 +133,6 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
               </NavLink>
             </div>
           )}
-=======
-          <div className="hidden md:flex items-center space-x-1">
-            <NavLink to="/calculator" current={location.pathname === '/calculator'}>
-              Calculator
-            </NavLink>
-            <NavLink to="/dashboard" current={location.pathname === '/dashboard'}>
-              Dashboard
-            </NavLink>
-            <NavLink to="/offset" current={location.pathname === '/offset'}>
-              Offset
-            </NavLink>
-            <NavLink to="/community" current={location.pathname === '/community'}>
-              Community
-            </NavLink>
-          </div>
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
 
           {/* User Actions */}
           <div className="flex items-center space-x-3">
@@ -190,7 +148,6 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
               </div>
             )}
             
-<<<<<<< HEAD
             {/* Notifications */}
             {isLoggedIn && (
               <div className="relative">
@@ -306,76 +263,6 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
                 </div>
               )}
             </div>
-=======
-            {/* Dark Mode Toggle */}
-            <button 
-              onClick={toggleDarkMode}
-              className="p-2 rounded-full hover:bg-gray-100 text-gray-600"
-            >
-              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
-            
-            {/* Notifications */}
-            <div className="relative">
-              <button 
-                onClick={() => setNotificationsOpen(!notificationsOpen)}
-                className="p-2 rounded-full hover:bg-gray-100 text-gray-600"
-              >
-                <Bell size={20} />
-                <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-primary text-white text-xs flex items-center justify-center">
-                  3
-                </span>
-              </button>
-              
-              {notificationsOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 z-10">
-                  <div className="px-4 py-2 border-b border-gray-100">
-                    <h3 className="font-medium">Notifications</h3>
-                  </div>
-                  <div className="max-h-96 overflow-y-auto">
-                    <NotificationItem 
-                      title="Challenge Completed!"
-                      message="You completed the 'Walk 10,000 steps' challenge."
-                      time="Just now"
-                    />
-                    <NotificationItem 
-                      title="New Suggestion"
-                      message="We have new ways for you to reduce your footprint."
-                      time="2 hours ago"
-                    />
-                    <NotificationItem 
-                      title="Community Update"
-                      message="Someone replied to your comment."
-                      time="Yesterday"
-                    />
-                  </div>
-                  <div className="px-4 py-2 border-t border-gray-100 text-center">
-                    <a href="#" className="text-primary text-sm font-medium">View all notifications</a>
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            {/* User Menu */}
-            <div className="relative ml-2">
-              <Link to="/profile" className="flex items-center space-x-2">
-                {user ? (
-                  <img 
-                    src={user.avatarUrl} 
-                    alt={user.name} 
-                    className="w-8 h-8 rounded-full object-cover border border-gray-200"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                    <User size={18} className="text-gray-500" />
-                  </div>
-                )}
-                <span className="hidden md:block text-sm font-medium">
-                  {user ? user.name : 'Sign In'}
-                </span>
-              </Link>
-            </div>
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
           </div>
         </div>
       </div>
@@ -396,11 +283,7 @@ const NavLink: React.FC<NavLinkProps> = ({ to, current, children }) => {
       className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
         current 
           ? 'text-primary bg-primary-light/20' 
-<<<<<<< HEAD
           : 'text-gray-800 hover:text-primary hover:bg-gray-50'
-=======
-          : 'text-gray-700 hover:text-primary hover:bg-gray-50'
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
       }`}
     >
       {children}
@@ -412,7 +295,6 @@ interface NotificationItemProps {
   title: string;
   message: string;
   time: string;
-<<<<<<< HEAD
   read: boolean;
 }
 
@@ -427,18 +309,6 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ title, message, tim
         <span className="text-xs text-gray-600">{time}</span>
       </div>
       <p className="text-xs text-gray-700 mt-1">{message}</p>
-=======
-}
-
-const NotificationItem: React.FC<NotificationItemProps> = ({ title, message, time }) => {
-  return (
-    <div className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
-      <div className="flex justify-between items-start">
-        <h4 className="text-sm font-medium">{title}</h4>
-        <span className="text-xs text-gray-500">{time}</span>
-      </div>
-      <p className="text-xs text-gray-600 mt-1">{message}</p>
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
     </div>
   );
 };

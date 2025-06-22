@@ -5,7 +5,6 @@ import { Users, Target, Heart, Award, Globe, Leaf } from 'lucide-react';
 const AboutPage: React.FC = () => {
   const team = [
     {
-<<<<<<< HEAD
       name: 'Akhila Ohmkumar',
       role: 'Computer Engineer',
       bio: 'Passionate about using technology to solve environmental challenges and create sustainable solutions.',
@@ -29,30 +28,6 @@ const AboutPage: React.FC = () => {
       name: 'Tanvi Powar',
       role: 'Computer Engineer',
       bio: 'Enthusiastic about building platforms that connect communities around shared environmental goals.',
-=======
-      name: 'Sarah Chen',
-      role: 'CEO & Co-founder',
-      bio: 'Environmental scientist with 10+ years in climate research and sustainable technology.',
-      image: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=300'
-    },
-    {
-      name: 'Michael Torres',
-      role: 'CTO & Co-founder',
-      bio: 'Former Google engineer passionate about using technology to solve climate challenges.',
-      image: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=300'
-    },
-    {
-      name: 'Emma Rodriguez',
-      role: 'Head of Sustainability',
-      bio: 'Carbon accounting expert with experience at leading environmental consulting firms.',
-      image: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300'
-    },
-    {
-      name: 'James Wilson',
-      role: 'Head of Product',
-      bio: 'Product designer focused on creating intuitive experiences for environmental action.',
-      image: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=300'
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
     }
   ];
 
@@ -80,21 +55,12 @@ const AboutPage: React.FC = () => {
   ];
 
   const milestones = [
-<<<<<<< HEAD
     { year: '2025', event: 'Carbon Compass founded with a mission to democratize climate action' },
     { year: '2025', event: 'Launched beta version with initial user testing and feedback' },
     { year: '2025', event: 'Developed comprehensive carbon tracking and offset features' },
     { year: '2025', event: 'Integrated AI-powered personalized recommendations' },
     { year: '2025', event: 'Launched community features and group challenges' },
     { year: '2025', event: 'Expanding to include educational resources and partnerships' }
-=======
-    { year: '2023', event: 'Carbon Compass founded with a mission to democratize climate action' },
-    { year: '2023', event: 'Launched beta version with 1,000 early adopters' },
-    { year: '2024', event: 'Reached 50,000 registered users tracking their carbon footprints' },
-    { year: '2024', event: 'Facilitated 100,000 tons of CO₂ offsets through verified projects' },
-    { year: '2024', event: 'Launched AI-powered personalized recommendations' },
-    { year: '2024', event: 'Expanded to include group challenges and community features' }
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
   ];
 
   return (
@@ -136,21 +102,12 @@ const AboutPage: React.FC = () => {
             </p>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center p-4 bg-green-50 rounded-lg">
-<<<<<<< HEAD
                 <h3 className="text-2xl font-bold text-green-600">Growing</h3>
                 <p className="text-sm text-green-700">User community</p>
               </div>
               <div className="text-center p-4 bg-blue-50 rounded-lg">
                 <h3 className="text-2xl font-bold text-blue-600">2025</h3>
                 <p className="text-sm text-blue-700">Founded this year</p>
-=======
-                <h3 className="text-2xl font-bold text-green-600">250K+</h3>
-                <p className="text-sm text-green-700">Users tracking footprints</p>
-              </div>
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <h3 className="text-2xl font-bold text-blue-600">500K</h3>
-                <p className="text-sm text-blue-700">Tons CO₂ offset</p>
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
               </div>
             </div>
           </motion.div>
@@ -214,19 +171,11 @@ const AboutPage: React.FC = () => {
         >
           <h2 className="text-3xl font-bold mb-4">Meet Our Team</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-<<<<<<< HEAD
             We're a team of Computer Engineers united by our passion for environmental action and sustainable technology solutions.
           </p>
         </motion.div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-=======
-            We're a diverse team of climate scientists, engineers, and designers united by our passion for environmental action.
-          </p>
-        </motion.div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
           {team.map((member, index) => (
             <motion.div
               key={index}
@@ -235,19 +184,11 @@ const AboutPage: React.FC = () => {
               transition={{ duration: 0.5, delay: 0.1 * (index + 8) }}
               className="bg-white rounded-xl shadow-sm p-6 text-center hover:shadow-md transition-shadow"
             >
-<<<<<<< HEAD
               <div className="w-20 h-20 bg-gradient-to-br from-primary to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-white text-2xl font-bold">
                   {member.name.split(' ').map(n => n[0]).join('')}
                 </span>
               </div>
-=======
-              <img 
-                src={member.image}
-                alt={member.name}
-                className="w-24 h-24 rounded-full object-cover mx-auto mb-4"
-              />
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
               <h3 className="text-lg font-semibold mb-1">{member.name}</h3>
               <p className="text-primary text-sm font-medium mb-3">{member.role}</p>
               <p className="text-xs text-gray-600">{member.bio}</p>
@@ -266,11 +207,7 @@ const AboutPage: React.FC = () => {
         >
           <h2 className="text-3xl font-bold mb-4">Our Journey</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-<<<<<<< HEAD
             From concept to reality, here are the key milestones in our journey to create Carbon Compass.
-=======
-            From a small idea to a growing movement, here are the key milestones in our journey.
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
           </p>
         </motion.div>
         
@@ -305,7 +242,6 @@ const AboutPage: React.FC = () => {
       >
         <h2 className="text-3xl font-bold mb-4">Join Our Mission</h2>
         <p className="text-xl mb-8 max-w-2xl mx-auto">
-<<<<<<< HEAD
           Ready to make a difference? Start tracking your carbon footprint today and join others 
           working toward a more sustainable future.
         </p>
@@ -320,16 +256,6 @@ const AboutPage: React.FC = () => {
             onClick={() => window.location.href = '/resources'}
             className="btn border-white text-white hover:bg-white hover:text-primary"
           >
-=======
-          Ready to make a difference? Start tracking your carbon footprint today and join thousands 
-          of others working toward a more sustainable future.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button className="btn bg-white text-primary hover:bg-gray-100">
-            Get Started
-          </button>
-          <button className="btn border-white text-white hover:bg-white hover:text-primary">
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
             Learn More
           </button>
         </div>

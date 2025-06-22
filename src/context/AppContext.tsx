@@ -1,19 +1,8 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from 'react';
-<<<<<<< HEAD
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { mockCommunityData } from '../data/mockData';
 import { User, CarbonData, CommunityPost } from '../types';
 import { supabase } from '../lib/supabase';
 import { User as SupabaseUser } from '@supabase/supabase-js';
-=======
-import { mockUserData, mockCommunityData } from '../data/mockData';
-import { User, CarbonData, CommunityPost } from '../types';
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
 
 interface AppContextType {
   user: User | null;
@@ -28,11 +17,8 @@ interface AppContextType {
   addCarbonData: (data: CarbonData) => void;
   addCommunityPost: (post: CommunityPost) => void;
   toggleLike: (postId: string) => void;
-<<<<<<< HEAD
   logout: () => Promise<void>;
   loading: boolean;
-=======
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -40,20 +26,18 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [carbonData, setCarbonData] = useState<CarbonData[]>([]);
-<<<<<<< HEAD
   const [communityPosts, setCommunityPosts] = useState<CommunityPost[]>(mockCommunityData);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [totalFootprint, setTotalFootprint] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Check for existing session on app load
+  // Fetch user session and data on app load
   useEffect(() => {
     const checkSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        
         if (session?.user) {
-          await fetchUserProfile(session.user);
+          await fetchUserProfileAndData(session.user);
         }
       } catch (error) {
         console.error('Error checking session:', error);
@@ -67,7 +51,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
-        await fetchUserProfile(session.user);
+        await fetchUserProfileAndData(session.user);
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
         setIsLoggedIn(false);
@@ -79,21 +63,22 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
+  // Fetch user profile and carbon data
+  const fetchUserProfileAndData = async (supabaseUser: SupabaseUser) => {
     try {
-      const { data: userProfile, error } = await supabase
+      // Fetch user profile
+      const { data: userProfile, error: profileError } = await supabase
         .from('users')
         .select('*')
         .eq('id', supabaseUser.id)
-        .single();
+        .maybeSingle();
 
-      if (error) {
-        console.error('Error fetching user profile:', error);
+      if (profileError) {
+        console.error('Error fetching user profile:', profileError);
         return;
       }
 
       if (userProfile) {
-        // Transform database user to app user format
         const appUser: User = {
           id: userProfile.id,
           name: userProfile.name,
@@ -108,31 +93,39 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           streak: userProfile.streak || 0,
           level: Math.floor((userProfile.points || 0) / 500) + 1,
           badges: userProfile.badges || [],
-
         };
 
         setUser(appUser);
-        setCarbonData(appUser.carbonHistory || []);
         setIsLoggedIn(true);
       }
+
+      // Fetch carbon data
+      const { data: carbonDataFromDb, error: carbonError } = await supabase
+        .from('carbon_data')
+        .select('id, date, category, activity, amount, details, inserted_at')
+        .eq('user_id', supabaseUser.id);
+
+      if (carbonError) {
+        console.error('Error fetching carbon data:', carbonError);
+        return;
+      }
+
+      if (carbonDataFromDb) {
+        const formattedCarbonData: CarbonData[] = carbonDataFromDb.map((item) => ({
+          id: item.id,
+          date: item.date,
+          category: item.category,
+          activity: item.activity || 'Carbon footprint calculation',
+          amount: item.amount,
+          details: item.details || {},
+        }));
+
+        setCarbonData(formattedCarbonData);
+      }
     } catch (error) {
-      console.error('Error in fetchUserProfile:', error);
+      console.error('Error in fetchUserProfileAndData:', error);
     }
   };
-=======
-  const [communityPosts, setCommunityPosts] = useState<CommunityPost[]>([]);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [totalFootprint, setTotalFootprint] = useState<number>(0);
-
-  // Initialize with mock data on login
-  useEffect(() => {
-    if (isLoggedIn && !user) {
-      setUser(mockUserData);
-      setCarbonData(mockUserData.carbonHistory || []);
-      setCommunityPosts(mockCommunityData);
-    }
-  }, [isLoggedIn, user]);
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
 
   // Calculate total carbon footprint
   useEffect(() => {
@@ -140,7 +133,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setTotalFootprint(total);
   }, [carbonData]);
 
+  // Add carbon data to local state only (edge function handles DB insert)
   const addCarbonData = (data: CarbonData) => {
+    if (!data.id) {
+      console.error('No ID provided for carbon data');
+      return;
+    }
     setCarbonData((prev) => [...prev, data]);
   };
 
@@ -167,7 +165,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     );
   };
 
-<<<<<<< HEAD
   const logout = async (): Promise<void> => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -175,29 +172,26 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         console.error('Logout error:', error);
         throw error;
       }
-      
+
       // Clear local state
       setUser(null);
       setIsLoggedIn(false);
       setCarbonData([]);
       setCommunityPosts(mockCommunityData);
       setTotalFootprint(0);
-      
+
       // Clear any stored data
       localStorage.removeItem('supabase.auth.token');
-      
+
       console.log('User logged out successfully');
     } catch (error) {
       console.error('Logout error:', error);
-      // Even if there's an error, ensure the user is logged out locally
       setUser(null);
       setIsLoggedIn(false);
       throw error;
     }
   };
 
-=======
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
   return (
     <AppContext.Provider
       value={{
@@ -213,11 +207,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         addCarbonData,
         addCommunityPost,
         toggleLike,
-<<<<<<< HEAD
         logout,
         loading,
-=======
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
       }}
     >
       {children}
@@ -231,8 +222,4 @@ export const useApp = (): AppContextType => {
     throw new Error('useApp must be used within an AppProvider');
   }
   return context;
-<<<<<<< HEAD
 };
-=======
-};
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd

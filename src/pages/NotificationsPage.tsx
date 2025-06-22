@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Bell, Check, X, ArrowLeft } from 'lucide-react';
@@ -289,29 +288,3 @@ const NotificationsPage: React.FC = () => {
 };
 
 export default NotificationsPage;
-=======
-import React from 'react';
-import { useApp } from '../context/AppContext';
-
-const NotificationsPage: React.FC = () => {
-  const { user } = useApp();
-  const notifications = user?.notifications ?? [];
-
-  return (
-    <div className="container mx-auto max-w-3xl p-6">
-      <h1 className="text-2xl font-semibold mb-4">Your notifications</h1>
-      {notifications.length === 0 && <p>No notifications yet 🎉</p>}
-      <ul className="space-y-4">
-        {notifications.map(n => (
-          <li key={n.id} className="bg-white p-4 rounded-lg shadow-sm">
-            <h3 className="font-medium">{n.title}</h3>
-            <p className="text-gray-600">{n.message}</p>
-            <span className="text-xs text-gray-400">{n.time}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-export default NotificationsPage;
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd

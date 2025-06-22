@@ -16,30 +16,22 @@ import {
   Key,
   ShieldAlert,
   Globe,
-<<<<<<< HEAD
   Camera,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
-=======
-} from 'lucide-react';
-import { useApp } from '../context/AppContext';
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
 
 type ProfileTab = 'overview' | 'badges' | 'settings';
 
 const ProfilePage: React.FC = () => {
   const { user, setUser, logout } = useApp();
   const [activeTab, setActiveTab] = useState<ProfileTab>('overview');
-<<<<<<< HEAD
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
-=======
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
 
   if (!user) {
     return (
@@ -69,11 +61,7 @@ const ProfilePage: React.FC = () => {
       </motion.div>
 
       {/* Profile Header */}
-<<<<<<< HEAD
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-8">
-=======
-      <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
         <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
           <div className="relative">
             <img
@@ -81,7 +69,6 @@ const ProfilePage: React.FC = () => {
               alt={user.name}
               className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white shadow-md"
             />
-<<<<<<< HEAD
             <button className="absolute bottom-0 right-0 bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:bg-primary/90 transition-colors">
               <Camera size={16} />
             </button>
@@ -91,17 +78,6 @@ const ProfilePage: React.FC = () => {
             <h2 className="text-2xl font-bold dark:text-white">{user.name}</h2>
 
             <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mt-2 text-gray-600 dark:text-gray-300">
-=======
-            <div className="absolute bottom-0 right-0 bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md">
-              <Edit size={16} />
-            </div>
-          </div>
-
-          <div className="flex-1 text-center md:text-left">
-            <h2 className="text-2xl font-bold">{user.name}</h2>
-
-            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mt-2 text-gray-600">
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
               <div className="flex items-center justify-center md:justify-start">
                 <Mail size={16} className="mr-2" />
                 <span>{user.email}</span>
@@ -134,11 +110,7 @@ const ProfilePage: React.FC = () => {
       {/* Profile Tabs */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="lg:col-span-1">
-<<<<<<< HEAD
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
-=======
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
             <ProfileTabButton
               active={activeTab === 'overview'}
               onClick={() => setActiveTab('overview')}
@@ -160,17 +132,10 @@ const ProfilePage: React.FC = () => {
               label="Account Settings"
             />
 
-<<<<<<< HEAD
             <div className="p-4 border-t dark:border-gray-700">
               <button
                 onClick={handleLogout}
                 className="w-full flex items-center justify-between text-gray-700 dark:text-gray-300 hover:text-primary transition-colors py-2"
-=======
-            <div className="p-4 border-t">
-              <button
-                onClick={logout}
-                className="w-full flex items-center justify-between text-gray-700 hover:text-primary transition-colors py-2"
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
               >
                 <div className="flex items-center">
                   <LogOut size={18} className="mr-3" />
@@ -212,11 +177,7 @@ const ProfileTabButton: React.FC<ProfileTabButtonProps> = ({
       className={`w-full flex items-center justify-between px-4 py-3 transition-colors ${
         active
           ? 'bg-primary-light/10 text-primary border-l-4 border-primary'
-<<<<<<< HEAD
           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-=======
-          : 'text-gray-700 hover:bg-gray-50'
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
       }`}
     >
       <div className="flex items-center">
@@ -228,10 +189,6 @@ const ProfileTabButton: React.FC<ProfileTabButtonProps> = ({
   );
 };
 
-<<<<<<< HEAD
-=======
-// 👇 Only changes to this component are needed for saving user updates
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
 const AccountSettings: React.FC<{ user: any; setUser: (u: any) => void }> = ({
   user,
   setUser,
@@ -255,80 +212,45 @@ const AccountSettings: React.FC<{ user: any; setUser: (u: any) => void }> = ({
   };
 
   return (
-<<<<<<< HEAD
     <div className="space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
       <h3 className="text-lg font-semibold mb-4 dark:text-white">Profile Information</h3>
       <div>
         <label className="block text-sm font-medium mb-1 dark:text-gray-300">Full Name</label>
-=======
-    <div className="space-y-4 bg-white rounded-xl shadow-sm p-6">
-      <h3 className="text-lg font-semibold mb-4">Profile Information</h3>
-      <div>
-        <label className="block text-sm font-medium mb-1">Full Name</label>
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
         <input
           type="text"
           name="name"
           value={formState.name}
           onChange={handleChange}
-<<<<<<< HEAD
           className="input w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         />
       </div>
       <div>
         <label className="block text-sm font-medium mb-1 dark:text-gray-300">Email</label>
-=======
-          className="input w-full"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium mb-1">Email</label>
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
         <input
           type="email"
           name="email"
           value={formState.email}
           onChange={handleChange}
-<<<<<<< HEAD
           className="input w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         />
       </div>
       <div>
         <label className="block text-sm font-medium mb-1 dark:text-gray-300">Location</label>
-=======
-          className="input w-full"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium mb-1">Location</label>
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
         <input
           type="text"
           name="location"
           value={formState.location}
           onChange={handleChange}
-<<<<<<< HEAD
           className="input w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         />
       </div>
       <div>
         <label className="block text-sm font-medium mb-1 dark:text-gray-300">Bio</label>
-=======
-          className="input w-full"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium mb-1">Bio</label>
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
         <textarea
           name="bio"
           value={formState.bio}
           onChange={handleChange}
-<<<<<<< HEAD
           className="input w-full h-24 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-=======
-          className="input w-full h-24"
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
         />
       </div>
       <div className="flex justify-end">
@@ -341,7 +263,6 @@ const AccountSettings: React.FC<{ user: any; setUser: (u: any) => void }> = ({
 };
 
 const ProfileOverview = ({ user }: { user: any }) => {
-<<<<<<< HEAD
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
       <h3 className="text-lg font-semibold mb-4 dark:text-white">Profile Overview</h3>
@@ -368,15 +289,3 @@ const BadgesAchievements = ({ user }: { user: any }) => {
 };
 
 export default ProfilePage;
-=======
-  // Keep your original content here
-  return <div>{/* ProfileOverview content here */}</div>;
-};
-
-const BadgesAchievements = ({ user }: { user: any }) => {
-  // Keep your original content here
-  return <div>{/* BadgesAchievements content here */}</div>;
-};
-
-export default ProfilePage;
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd

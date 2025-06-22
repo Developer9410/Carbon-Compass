@@ -21,20 +21,12 @@
   }
   
   body {
-<<<<<<< HEAD
     @apply bg-background text-foreground transition-colors duration-300;
-=======
-    @apply bg-background text-foreground;
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
   
   h1, h2, h3, h4, h5, h6 {
-<<<<<<< HEAD
     @apply font-semibold leading-tight text-gray-900;
-=======
-    @apply font-semibold leading-tight;
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
   }
   
   h1 {
@@ -50,11 +42,7 @@
   }
   
   p {
-<<<<<<< HEAD
     @apply leading-relaxed text-gray-800;
-=======
-    @apply leading-relaxed;
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
   }
 }
 
@@ -72,11 +60,7 @@
   }
   
   .btn-outline {
-<<<<<<< HEAD
     @apply border border-gray-300 bg-transparent hover:bg-gray-50 focus:ring-gray-300/30 text-gray-800;
-=======
-    @apply border border-gray-300 bg-transparent hover:bg-gray-50 focus:ring-gray-300/30;
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
   }
   
   .card {
@@ -84,11 +68,7 @@
   }
   
   .input {
-<<<<<<< HEAD
     @apply rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 text-gray-900;
-=======
-    @apply rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30;
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
   }
   
   .badge {
@@ -106,7 +86,6 @@
   .badge-orange {
     @apply bg-orange-100 text-orange-800;
   }
-<<<<<<< HEAD
 
   /* Improved text contrast classes */
   .text-muted {
@@ -116,6 +95,4 @@
   .text-subtle {
     @apply text-gray-800;
   }
-=======
->>>>>>> 9bd67be8f5090565eb3bcf08805db38d3ea81cdd
 }

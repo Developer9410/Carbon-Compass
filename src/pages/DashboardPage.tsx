@@ -54,6 +54,17 @@ const DashboardPage: React.FC = () => {
   // Category colors
   const COLORS = ['#3B82F6', '#F97316', '#10B981', '#A3A3A3'];
 
+  // Handle implement suggestion
+  const handleImplementSuggestion = (suggestion: any) => {
+    alert(`Great choice! You've decided to implement: "${suggestion.title}". This could save you approximately ${suggestion.estimatedReduction} kg CO₂e per month. We'll track your progress and award you Green Points for taking action!`);
+    
+    // In a real app, you would:
+    // 1. Save the user's commitment to implement this suggestion
+    // 2. Set up tracking for this specific action
+    // 3. Award points when the user completes the action
+    // 4. Update the user's profile with this commitment
+  };
+
   return (
     <div className="container mx-auto max-w-6xl px-4">
       <motion.div
@@ -343,7 +354,12 @@ const DashboardPage: React.FC = () => {
                   </div>
                   <div className="mt-3 flex justify-between items-center">
                     <span className="text-xs text-green-600 font-medium">+{Math.floor(suggestion.estimatedReduction * 2)} Green Points</span>
-                    <button className="btn btn-sm btn-outline">Implement</button>
+                    <button 
+                      onClick={() => handleImplementSuggestion(suggestion)}
+                      className="btn btn-sm btn-outline hover:btn-primary transition-colors"
+                    >
+                      Implement
+                    </button>
                   </div>
                 </div>
               ))}
