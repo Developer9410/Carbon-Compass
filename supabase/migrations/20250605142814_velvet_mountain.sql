@@ -1,32 +1,29 @@
+-- 20250604163000_velvet_mountain_ai_suggestions.sql
+
 /*
   # Create AI suggestions table
-
-  1. New Tables
-    - `ai_suggestions`
-      - `id` (uuid, primary key)
-      - `user_id` (uuid, foreign key to users)
-      - `carbon_entry_id` (uuid, foreign key to carbon_entries)
-      - `suggestions` (jsonb array of suggestions)
-      - `created_at` (timestamp)
-
-  2. Security
-    - Enable RLS on ai_suggestions table
-    - Add policies for authenticated users to read their own suggestions
+  This depends on carbon_entries (created in aged_morning).
 */
 
 CREATE TABLE IF NOT EXISTS ai_suggestions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL REFERENCES users(id),
-  carbon_entry_id uuid NOT NULL REFERENCES carbon_entries(id),
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  carbon_entry_id uuid NOT NULL REFERENCES carbon_entries(id) ON DELETE CASCADE,
   suggestions jsonb NOT NULL,
-  created_at timestamptz DEFAULT now(),
-  UNIQUE(carbon_entry_id)
+  created_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (carbon_entry_id)
 );
 
 ALTER TABLE ai_suggestions ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can read own suggestions"
+CREATE POLICY IF NOT EXISTS "Users can read own suggestions"
   ON ai_suggestions
   FOR SELECT
   TO authenticated
   USING (auth.uid() = user_id);
+
+CREATE POLICY IF NOT EXISTS "Users can insert own suggestions"
+  ON ai_suggestions
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (auth.uid() = user_id);
