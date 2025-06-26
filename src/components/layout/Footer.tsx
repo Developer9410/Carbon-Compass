@@ -7,10 +7,10 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-white border-t">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Brand and Mission at the top */}
+        {/* Brand and Mission at the top with Logo */}
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center space-x-2 mb-3 sm:mb-4">
-            <Compass className="w-5 sm:w-6 h-5 sm:h-6 text-primary" />
+            <img src="/path-to-your-logo.png" alt="Carbon Compass Logo" className="w-10 h-10 sm:w-12 sm:h-12" />
             <span className="text-base sm:text-lg font-bold">Carbon Compass</span>
           </div>
           <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
@@ -79,7 +79,7 @@ const Footer: React.FC = () => {
               </p>
               <div className="flex items-center space-x-1">
                 <BoltBadge className="h-5 w-5" />
-                <a href="https://bolt.new/" target="_blank" rel="noopener noreferrer" className="text-xs sm:text-sm text-gray-600 hover:text-primary">
+                <a href="https://bolt.new/" target="_blank" rel="noopener noreferrer" className="text-xs sm:text-sm text-primary font-bold hover:text-primary-dark">
                   Built on Bolt.new
                 </a>
               </div>
