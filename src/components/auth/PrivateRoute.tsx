@@ -5,8 +5,7 @@ import { useApp } from '../../context/AppContext';
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isLoggedIn, loading } = useApp();
 
-  // ⏳ Show nothing or loader while auth status is being determined
-  if (loading) return null;
+  if (loading) return null; // Show loader or null while checking auth
 
   return isLoggedIn ? <>{children}</> : <Navigate to="/login" replace />;
 };
