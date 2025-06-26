@@ -47,6 +47,9 @@ const Layout = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <div className="relative">
+        <BoltBadge className="absolute top-4 left-4 sm:left-6 md:left-8 z-50" />
+      </div>
       <Navbar toggleSidebar={toggleSidebar} />
       <div className="flex flex-1">
         <Sidebar isOpen={sidebarOpen} closeSidebar={() => setSidebarOpen(false)} />
@@ -65,8 +68,6 @@ const Layout = () => {
         </main>
       </div>
       <Footer />
-      {/* Repositioned badge to align with Login button */}
-      <BoltBadge className="fixed top-16 right-1/2 transform translate-x-1/2 md:top-20 md:right-1/2 md:transform md:translate-x-1/4 lg:top-24 lg:right-1/2 lg:transform lg:translate-x-1/3 z-40" />
     </div>
   );
 };
