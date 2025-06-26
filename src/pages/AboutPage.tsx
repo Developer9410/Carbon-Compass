@@ -15,7 +15,7 @@ const AboutPage: React.FC = () => {
       bio: 'Dedicated to developing innovative software solutions that promote environmental awareness and action.',
     },
     {
-      name: 'Neha Durgude',
+      name: 'Neha Dhurgude',
       role: 'Computer Engineer',
       bio: 'Focused on creating user-friendly applications that make sustainability accessible to everyone.',
     },

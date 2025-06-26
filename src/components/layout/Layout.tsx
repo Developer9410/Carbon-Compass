@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
+import BoltBadge from '../ui/BoltBadge';
 import { motion } from 'framer-motion';
 import { useApp } from '../../context/AppContext';
 
@@ -69,6 +70,9 @@ const Layout: React.FC = () => {
       </div>
       
       <Footer />
+      
+      {/* Bolt.new Badge */}
+      <BoltBadge />
     </div>
   );
 };

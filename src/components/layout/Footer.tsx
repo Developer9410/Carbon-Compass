@@ -71,9 +71,19 @@ const Footer: React.FC = () => {
             <p className="text-sm text-gray-600 mb-4 md:mb-0">
               &copy; {new Date().getFullYear()} Carbon Compass. All rights reserved.
             </p>
-            <p className="text-sm text-gray-600 flex items-center">
-              Made with <Heart size={14} className="mx-1 text-error" /> for a greener planet
-            </p>
+            <div className="flex items-center space-x-4">
+              <p className="text-sm text-gray-600 flex items-center">
+                Made with <Heart size={14} className="mx-1 text-error" /> for a greener planet
+              </p>
+              <a 
+                href="https://bolt.new/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-xs text-gray-500 hover:text-primary transition-colors"
+              >
+                Built with Bolt.new
+              </a>
+            </div>
           </div>
         </div>
       </div>

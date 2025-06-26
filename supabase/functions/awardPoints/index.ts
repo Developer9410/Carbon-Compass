@@ -1,6 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
-import { verify } from 'npm:jsonwebtoken@9.0.2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -39,8 +38,17 @@ serve(async (req: Request) => {
       );
     }
 
-    const token = authHeader.split(' ')[1];
-    const decoded = verify(token, Deno.env.get('JWT_SECRET') ?? '') as { userId: string };
+    const token = authHeader.replace('Bearer ', '');
+    
+    // Get user from token
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    
+    if (userError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Get request body
     const { actionType, description, carbonEntryId, metadata } = await req.json();
@@ -64,7 +72,7 @@ serve(async (req: Request) => {
     const { data: transaction, error: transactionError } = await supabase
       .from('point_transactions')
       .insert({
-        user_id: decoded.userId,
+        user_id: user.id,
         points,
         action_type: actionType,
         description,
@@ -78,22 +86,22 @@ serve(async (req: Request) => {
     }
 
     // Update user's total points
-    const { data: user, error: userError } = await supabase
+    const { data: userData, error: userDataError } = await supabase
       .from('users')
       .select('points')
-      .eq('id', decoded.userId)
+      .eq('id', user.id)
       .single();
 
-    if (userError) {
-      throw userError;
+    if (userDataError) {
+      throw userDataError;
     }
 
-    const newTotal = (user.points || 0) + points;
+    const newTotal = (userData.points || 0) + points;
 
     const { error: updateError } = await supabase
       .from('users')
       .update({ points: newTotal })
-      .eq('id', decoded.userId);
+      .eq('id', user.id);
 
     if (updateError) {
       throw updateError;
@@ -112,13 +120,6 @@ serve(async (req: Request) => {
   } catch (error) {
     console.error('Points award error:', error);
     
-    if (error.name === 'JsonWebTokenError') {
-      return new Response(
-        JSON.stringify({ error: 'Invalid token' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

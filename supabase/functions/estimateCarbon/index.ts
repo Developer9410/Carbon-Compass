@@ -191,7 +191,18 @@ serve(async (req: Request) => {
         category: 'mixed',
         activity: 'Carbon footprint calculation',
         amount: totalEmissions,
-        details: { transport, energy, diet, breakdown: { transport: transportEmissions, energy: energyEmissions, diet: dietEmissions, other: otherEmissions } },
+        details: { 
+          transport, 
+          energy, 
+          diet, 
+          breakdown: { 
+            transport: transportEmissions, 
+            energy: energyEmissions, 
+            diet: dietEmissions, 
+            other: otherEmissions 
+          } 
+        },
+        inserted_at: new Date().toISOString(),
       })
       .select('id')
       .single();
