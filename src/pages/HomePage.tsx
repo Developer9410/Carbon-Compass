@@ -8,7 +8,6 @@ const HomePage: React.FC = () => {
   const { isLoggedIn } = useApp();
   const navigate = useNavigate();
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
