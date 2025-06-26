@@ -79,8 +79,14 @@ const Footer: React.FC = () => {
                 href="https://bolt.new/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-xs text-gray-500 hover:text-primary transition-colors"
+                className="flex items-center text-xs text-gray-500 hover:text-primary transition-colors" // Added flex and items-center for alignment
               >
+                {/* Bolt.new badge image */}
+                <img 
+                  src="/black_circle_360x360.png" 
+                  alt="Built with Bolt.new" 
+                  className="h-5 w-5 mr-1" // Adjust size as needed, using Tailwind's h-5 w-5 for 20px
+                />
                 Built with Bolt.new
               </a>
             </div>
