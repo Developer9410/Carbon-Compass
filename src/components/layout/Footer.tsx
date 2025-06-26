@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
         {/* Brand and Mission at the top with Logo */}
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center space-x-2 mb-3 sm:mb-4">
-            <img src="/path-to-your-logo.png" alt="Carbon Compass Logo" className="w-10 h-10 sm:w-12 sm:h-12" />
+            <Compass className="w-10 h-10 sm:w-12 sm:h-12 text-primary" />
             <span className="text-base sm:text-lg font-bold">Carbon Compass</span>
           </div>
           <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
