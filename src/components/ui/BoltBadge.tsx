@@ -15,22 +15,12 @@ const BoltBadge: React.FC = () => {
       whileTap={{ scale: 0.95 }}
     >
       <div className="relative">
-        {/* Black circle badge for light backgrounds */}
-        <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="text-white"
-          >
-            <path
-              d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"
-              fill="currentColor"
-            />
-          </svg>
-        </div>
+        {/* Use the black circle badge for light backgrounds */}
+        <img 
+          src="/black_circle_360x360.png"
+          alt="Built with Bolt.new"
+          className="w-12 h-12 md:w-14 md:h-14 hover:shadow-xl transition-shadow duration-300 rounded-full"
+        />
         
         {/* Tooltip */}
         <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">

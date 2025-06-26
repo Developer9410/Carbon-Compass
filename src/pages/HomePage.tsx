@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Calculator, BarChart2, Leaf, Users, ArrowRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import BoltBadge from '../components/ui/BoltBadge';
 
 const HomePage: React.FC = () => {
   const { isLoggedIn } = useApp();
@@ -42,7 +43,10 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto pb-12">
+    <div className="container mx-auto pb-12 relative">
+      {/* Bolt.new Badge - Visible on Homepage */}
+      <BoltBadge />
+      
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 md:py-32 rounded-3xl bg-gradient-to-r from-green-50 to-blue-50">
         <div className="absolute inset-0 overflow-hidden">
