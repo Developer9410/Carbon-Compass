@@ -99,7 +99,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-between h-auto py-2">
           {/* Logo and Brand with BoltBadge */}
-          <div className="flex items-center space-x-4 mb-4"> {/* Increased space-x-4 for better spacing */}
+          <div className="flex items-center space-x-4 mb-4">
             <button
               className="md:hidden mr-2 p-2 rounded-lg hover:bg-gray-100"
               onClick={toggleSidebar}
