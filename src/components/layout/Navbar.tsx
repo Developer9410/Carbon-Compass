@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, User, Bell, Compass, X } from 'lucide-react';
+import { Menu, User, Bell, Compass, X, Bolt } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import CarbonNeutralBadge from '../ui/CarbonNeutralBadge';
+import BoltBadge from '../ui/BoltBadge';
 
 interface NavbarProps {
   toggleSidebar: () => void;
@@ -16,7 +17,6 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Mock notifications data
   const [notifications, setNotifications] = useState([
     {
       id: '1',
@@ -41,12 +41,10 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
     }
   ]);
 
-  // Mock offset data - in a real app this would come from the database
   const totalOffsetAmount = user?.offsetHistory?.reduce((sum, offset) => sum + offset.amount, 0) || 0;
   const isNeutral = totalOffsetAmount >= totalFootprint;
   const offsetPercentage = totalFootprint > 0 ? (totalOffsetAmount / totalFootprint) * 100 : 0;
 
-  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 10) {
@@ -60,19 +58,18 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
- const handleLogout = async () => {
-  try {
-    await logout();               // Calls supabase.auth.signOut() and clears user in context
-    setNotificationsOpen(false);
-    setIsLoggedIn(false);         // <-- Explicitly mark as logged out
-    navigate('/');
-  } catch (error) {
-    console.error('Logout error:', error);
-    setIsLoggedIn(false);         // <-- Ensure flag is false even on error
-    navigate('/');
-  }
-};
-
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setNotificationsOpen(false);
+      setIsLoggedIn(false);
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      setIsLoggedIn(false);
+      navigate('/');
+    }
+  };
 
   const handleViewAllNotifications = () => {
     setNotificationsOpen(false);
@@ -100,35 +97,35 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo and Brand */}
-          <div className="flex items-center">
+        <div className="flex flex-col items-center justify-between h-auto py-2">
+          {/* Logo and Brand with BoltBadge */}
+          <div className="flex items-center space-x-2 mb-4">
             <button 
               className="md:hidden mr-2 p-2 rounded-lg hover:bg-gray-100"
               onClick={toggleSidebar}
             >
               <Menu size={22} />
             </button>
-            
             <Link to="/" className="flex items-center space-x-2">
               <Compass className="w-8 h-8 text-primary" />
               <span className="text-xl font-bold text-gray-900">Carbon Compass</span>
+              <BoltBadge className="h-6 w-6" />
             </Link>
           </div>
 
           {/* Desktop Navigation */}
           {isLoggedIn && (
-            <div className="hidden md:flex items-center space-x-1">
+            <div className="hidden md:flex items-center space-x-1 mb-4">
               <NavLink to="/calculator" current={location.pathname === '/calculator'}>
                 Calculator
               </NavLink>
-              <NavLink to="/dashboard" current={location.pathname === '/dashboard'}>
+              <NavLink to="/dashboard" current={location.pathname === '/dashboard'>
                 Dashboard
               </NavLink>
-              <NavLink to="/offset" current={location.pathname === '/offset'}>
+              <NavLink to="/offset" current={location.pathname === '/offset'>
                 Offset
               </NavLink>
-              <NavLink to="/community" current={location.pathname === '/community'}>
+              <NavLink to="/community" current={location.pathname === '/community'>
                 Community
               </NavLink>
             </div>
@@ -136,7 +133,6 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
 
           {/* User Actions */}
           <div className="flex items-center space-x-3">
-            {/* Carbon Neutral Badge */}
             {user && (
               <div className="hidden sm:block">
                 <CarbonNeutralBadge 
@@ -148,7 +144,6 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
               </div>
             )}
             
-            {/* Notifications */}
             {isLoggedIn && (
               <div className="relative">
                 <button 
@@ -225,7 +220,6 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
               </div>
             )}
             
-            {/* User Menu / Auth */}
             <div className="relative ml-2">
               {isLoggedIn ? (
                 <div className="flex items-center space-x-2">
@@ -247,19 +241,21 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center space-x-2">
-                  <Link 
-                    to="/login" 
-                    className="text-sm font-medium text-gray-800 hover:text-primary px-3 py-2 rounded-md"
-                  >
-                    Login
-                  </Link>
-                  <Link 
-                    to="/register" 
-                    className="btn btn-primary text-sm px-4 py-2"
-                  >
-                    Register
-                  </Link>
+                <div className="flex flex-col items-center space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Link 
+                      to="/login" 
+                      className="text-sm font-medium text-gray-800 hover:text-primary px-3 py-2 rounded-md"
+                    >
+                      Login
+                    </Link>
+                    <Link 
+                      to="/register" 
+                      className="btn btn-primary text-sm px-4 py-2"
+                    >
+                      Register
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>
