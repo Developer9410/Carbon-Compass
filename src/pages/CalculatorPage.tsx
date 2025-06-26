@@ -47,7 +47,6 @@ const CalculatorPage: React.FC = () => {
     setIsCalculating(true);
 
     try {
-      // Validate inputs
       if (!transportInput.type || !transportInput.distance || !transportInput.frequency) {
         throw new Error("Transport inputs are incomplete");
       }
@@ -58,13 +57,13 @@ const CalculatorPage: React.FC = () => {
         throw new Error("Diet inputs are incomplete");
       }
 
-      // Get user session for JWT token
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        throw new Error("User not authenticated");
-      }
+      if (!session) throw new Error("User not authenticated");
 
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/estimateCarbon`, {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      if (!supabaseUrl) throw new Error("Supabase URL not configured in .env");
+
+      const response = await fetch(`${supabaseUrl}/functions/v1/estimateCarbon`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,7 +84,7 @@ const CalculatorPage: React.FC = () => {
 
       const result = await response.json();
       console.log('Edge function response:', result);
-      
+
       if (!result.success || !result.data) {
         throw new Error(result.error || 'Invalid response from carbon calculator');
       }
@@ -93,7 +92,6 @@ const CalculatorPage: React.FC = () => {
       setCalculationResult(result.data);
       setShowResults(true);
 
-      // Automatically add to local state for immediate UI update
       if (result.data.entryId) {
         const carbonData: CarbonData = {
           id: result.data.entryId,
@@ -110,10 +108,9 @@ const CalculatorPage: React.FC = () => {
         };
         addCarbonData(carbonData);
       }
-
     } catch (error) {
       console.error('Error calculating carbon footprint:', error);
-      alert(`Error calculating your footprint: ${error.message}. Please try again.`);
+      alert(`Error calculating your footprint: ${error.message}. Please try again or check the console for details.`);
     } finally {
       setIsCalculating(false);
     }
@@ -122,17 +119,14 @@ const CalculatorPage: React.FC = () => {
   const handleSaveResults = () => {
     if (calculationResult) {
       alert(`Your carbon footprint data has been saved! You earned ${calculationResult.pointsEarned || 50} Green Points!`);
-      // Navigate to dashboard instead of just hiding results
       navigate('/dashboard');
     }
   };
 
   const handleAddMore = () => {
-    // Reset all states to allow new calculation
     setShowResults(false);
     setCalculationResult(null);
     setActiveTab('transport');
-    // Reset form inputs to defaults
     setTransportInput({
       type: 'car',
       distance: 20,
@@ -164,14 +158,11 @@ const CalculatorPage: React.FC = () => {
         className="mb-8"
       >
         <h1 className="text-3xl font-bold mb-2">Carbon Footprint Calculator</h1>
-        <p className="text-gray-600">
-          Calculate your carbon footprint by providing information about your lifestyle and habits.
-        </p>
+        <p className="text-gray-600">Calculate your carbon footprint by providing information about your lifestyle and habits.</p>
       </motion.div>
 
       {!showResults ? (
         <div className="bg-white rounded-xl shadow-sm p-6">
-          {/* Tabs */}
           <div className="flex border-b mb-6">
             <TabButton
               active={activeTab === 'transport'}
@@ -193,20 +184,12 @@ const CalculatorPage: React.FC = () => {
             />
           </div>
 
-          {/* Form content based on active tab */}
           <div className="py-4">
-            {activeTab === 'transport' && (
-              <TransportForm input={transportInput} setInput={setTransportInput} />
-            )}
-            {activeTab === 'energy' && (
-              <EnergyForm input={energyInput} setInput={setEnergyInput} />
-            )}
-            {activeTab === 'diet' && (
-              <DietForm input={dietInput} setInput={setDietInput} />
-            )}
+            {activeTab === 'transport' && <TransportForm input={transportInput} setInput={setTransportInput} />}
+            {activeTab === 'energy' && <EnergyForm input={energyInput} setInput={setEnergyInput} />}
+            {activeTab === 'diet' && <DietForm input={dietInput} setInput={setDietInput} />}
           </div>
 
-          {/* Navigation buttons */}
           <div className="flex justify-between mt-8">
             <button
               onClick={() => {
@@ -247,12 +230,10 @@ const CalculatorPage: React.FC = () => {
         >
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold mb-2">Your Carbon Footprint</h2>
-            <p className="text-gray-600 mb-6">
-              Based on the information you provided, here's your estimated carbon footprint:
-            </p>
+            <p className="text-gray-600 mb-6">Based on the information you provided, here's your estimated carbon footprint:</p>
             <div className="bg-gray-50 rounded-xl p-6 mb-8">
               <p className="text-5xl font-bold text-primary mb-2">
-                {calculationResult.totalEmissions} <span className="text-2xl">kg CO₂e</span>
+                {calculationResult?.totalEmissions} <span className="text-2xl">kg CO₂e</span>
               </p>
               <p className="text-gray-500">per month</p>
             </div>
@@ -260,55 +241,46 @@ const CalculatorPage: React.FC = () => {
               <div className="bg-blue-50 rounded-lg p-4">
                 <Car className="w-6 h-6 text-blue-500 mb-2 mx-auto" />
                 <p className="font-medium">Transport</p>
-                <p className="text-gray-600 text-sm">{calculationResult.breakdown.transport} kg CO₂e</p>
+                <p className="text-gray-600 text-sm">{calculationResult?.breakdown.transport} kg CO₂e</p>
               </div>
               <div className="bg-orange-50 rounded-lg p-4">
                 <Home className="w-6 h-6 text-orange-500 mb-2 mx-auto" />
                 <p className="font-medium">Energy</p>
-                <p className="text-gray-600 text-sm">{calculationResult.breakdown.energy} kg CO₂e</p>
+                <p className="text-gray-600 text-sm">{calculationResult?.breakdown.energy} kg CO₂e</p>
               </div>
               <div className="bg-green-50 rounded-lg p-4">
                 <Utensils className="w-6 h-6 text-green-500 mb-2 mx-auto" />
                 <p className="font-medium">Diet</p>
-                <p className="text-gray-600 text-sm">{calculationResult.breakdown.diet} kg CO₂e</p>
+                <p className="text-gray-600 text-sm">{calculationResult?.breakdown.diet} kg CO₂e</p>
               </div>
             </div>
-            
-            {calculationResult.pointsEarned && (
+
+            {calculationResult?.pointsEarned && (
               <div className="bg-primary-light/10 rounded-lg p-4 mb-6">
-                <p className="text-primary font-medium">
-                  🎉 You earned {calculationResult.pointsEarned} Green Points for tracking your footprint!
-                </p>
+                <p className="text-primary font-medium">🎉 You earned {calculationResult.pointsEarned} Green Points for tracking your footprint!</p>
               </div>
             )}
-            
+
             <div className="bg-primary-light/10 rounded-lg p-4 mb-6 flex items-start">
               <Info className="w-5 h-5 text-primary mt-0.5 mr-3 flex-shrink-0" />
               <p className="text-sm text-left">
                 The average carbon footprint is approximately 500 kg CO₂e per month.
-                Your footprint is {calculationResult.totalEmissions < 500 ? 'below' : 'above'} average.
+                Your footprint is {calculationResult?.totalEmissions < 500 ? 'below' : 'above'} average.
                 Visit the dashboard for personalized recommendations on how to reduce your impact.
               </p>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
-            <button
-              onClick={handleSaveResults}
-              className="btn btn-primary"
-            >
+            <button onClick={handleSaveResults} className="btn btn-primary">
               <Save size={16} className="mr-2" /> Continue to Dashboard
             </button>
-            <button
-              onClick={handleAddMore}
-              className="btn btn-outline"
-            >
+            <button onClick={handleAddMore} className="btn btn-outline">
               <PlusCircle size={16} className="mr-2" /> Calculate Again
             </button>
           </div>
         </motion.div>
       )}
 
-      {/* Additional information */}
       {!showResults && (
         <div className="mt-8 bg-primary-light/10 rounded-xl p-6">
           <h3 className="font-semibold mb-2 flex items-center">
@@ -320,7 +292,7 @@ const CalculatorPage: React.FC = () => {
           </p>
           <p className="text-sm text-gray-700">
             The results are calculated using industry-standard emission factors and methodologies.
-            Your data is securely stored and you'll earn Green Points for tracking your footprint!
+            Your data is securely stored, and you'll earn Green Points for tracking your footprint!
           </p>
         </div>
       )}
@@ -329,16 +301,15 @@ const CalculatorPage: React.FC = () => {
 };
 
 // TabButton component
-const TabButton: React.FC<{ active: boolean; onClick: () => void; icon: React.ReactNode; label: string }> =
-  ({ active, onClick, icon, label }) => (
-    <button
-      className={`flex items-center px-4 py-2 ${active ? 'border-b-2 border-primary text-primary' : 'text-gray-600'}`}
-      onClick={onClick}
-    >
-      {icon}
-      <span className="ml-2">{label}</span>
-    </button>
-  );
+const TabButton: React.FC<{ active: boolean; onClick: () => void; icon: React.ReactNode; label: string }> = ({ active, onClick, icon, label }) => (
+  <button
+    className={`flex items-center px-4 py-2 ${active ? 'border-b-2 border-primary text-primary' : 'text-gray-600'}`}
+    onClick={onClick}
+  >
+    {icon}
+    <span className="ml-2">{label}</span>
+  </button>
+);
 
 // TransportForm component
 const TransportForm: React.FC<{ input: TransportInput; setInput: (input: TransportInput) => void }> = ({ input, setInput }) => {
