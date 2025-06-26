@@ -48,7 +48,7 @@ const RegisterPage: React.FC = () => {
     }
 
     try {
-      // First, sign up the user with Supabase Auth
+      // Sign up the user with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
@@ -59,28 +59,28 @@ const RegisterPage: React.FC = () => {
       }
 
       if (authData.user) {
-        // Create user profile in the users table
+        // Create user profile in the profiles table
         const { error: profileError } = await supabase
-          .from('users')
+          .from('profiles')
           .insert([
             {
               id: authData.user.id,
               name: formData.name,
-              email: formData.email,
               points: 0,
+              location: 'San Francisco, CA',
             }
           ]);
 
         if (profileError) {
-          console.error('Profile creation error:', profileError);
-          // Don't throw here as the auth user was created successfully
+          console.error('Profile creation error:', profileError.message);
+          // Log the error but proceed, as auth user is created
         }
 
         setSuccess('Account created successfully! You can now sign in.');
         
-        // Redirect to dashboard after a short delay
+        // Redirect to login after a short delay
         setTimeout(() => {
-          navigate('/dashboard');
+          navigate('/login'); // Redirect to login instead of dashboard for new users
         }, 2000);
       }
     } catch (error: any) {
