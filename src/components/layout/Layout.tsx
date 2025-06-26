@@ -52,7 +52,7 @@ const Layout: React.FC = () => {
       <Navbar toggleSidebar={toggleSidebar} />
       <div className="flex flex-1">
         <Sidebar isOpen={sidebarOpen} closeSidebar={() => setSidebarOpen(false)} />
-        <main className="flex-1 px-4 py-6 md:px-8 lg:px-12 relative overflow-hidden">
+        <main className="flex-1 px-4 py-6 md:px-8 lg:px-12 relative overflow-auto">
           <motion.div
             key={location.pathname}
             initial="initial"
@@ -67,8 +67,8 @@ const Layout: React.FC = () => {
         </main>
       </div>
       <Footer />
-      {/* Bolt.new Badge - Positioned in top right */}
-      <BoltBadge />
+      {/* Bolt.new Badge - Adjusted to avoid overlapping with buttons */}
+      <BoltBadge className="fixed top-4 right-4 z-50 md:top-6 md:right-6 lg:top-8 lg:right-8" />
     </div>
   );
 };
