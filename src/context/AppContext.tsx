@@ -35,12 +35,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const checkSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        console.log('Initial session check:', session); // Debug log
+        console.log('Initial session check:', session);
         if (session?.user) {
           await fetchUserProfileAndData(session.user);
         } else {
           setUser(null);
           setIsLoggedIn(false);
+          console.log('No active session found');
         }
       } catch (error) {
         console.error('Error checking session:', error);
@@ -54,14 +55,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     checkSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, session); // Debug log
+      console.log('Auth state changed:', event, session);
       if (event === 'SIGNED_IN' && session?.user) {
+        console.log('Fetching profile for user:', session.user.id);
         await fetchUserProfileAndData(session.user);
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
         setIsLoggedIn(false);
         setCarbonData([]);
         setTotalFootprint(0);
+        console.log('User signed out');
       }
     });
 
@@ -70,25 +73,52 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const fetchUserProfileAndData = async (supabaseUser: SupabaseUser) => {
     try {
+      console.log('Fetching profile for user ID:', supabaseUser.id);
       const { data: userProfile, error: profileError } = await supabase
-        .from('users')
+        .from('profiles')
         .select('*')
         .eq('id', supabaseUser.id)
         .maybeSingle();
 
       if (profileError) {
-        console.error('Error fetching user profile:', profileError);
+        console.error('Profile fetch error:', profileError.message);
+        // Fallback to auth.users metadata if profiles table is empty
+        const { data: authUser } = await supabase
+          .from('auth.users')
+          .select('id, email, user_metadata, created_at')
+          .eq('id', supabaseUser.id)
+          .maybeSingle();
+        if (authUser) {
+          const appUser: User = {
+            id: authUser.id,
+            name: authUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || 'User',
+            email: authUser.email || supabaseUser.email,
+            avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${supabaseUser.email}`,
+            location: authUser.user_metadata?.location || 'San Francisco, CA',
+            joinDate: new Date(authUser.created_at).toLocaleDateString(),
+            greenPoints: authUser.user_metadata?.points || 0,
+            carbonHistory: authUser.user_metadata?.carbonHistory || [],
+            offsetHistory: authUser.user_metadata?.offsetHistory || [],
+            challenges: authUser.user_metadata?.challenges || [],
+            streak: authUser.user_metadata?.streak || 0,
+            level: Math.floor((authUser.user_metadata?.points || 0) / 500) + 1,
+            badges: authUser.user_metadata?.badges || [],
+          };
+          setUser(appUser);
+          setIsLoggedIn(true);
+          console.log('User set from auth.users:', appUser);
+        }
         return;
       }
 
       if (userProfile) {
         const appUser: User = {
           id: userProfile.id,
-          name: userProfile.name,
-          email: userProfile.email,
-          avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userProfile.email}`,
+          name: userProfile.name || supabaseUser.email?.split('@')[0] || 'User',
+          email: supabaseUser.email || userProfile.email,
+          avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${supabaseUser.email}`,
           location: userProfile.location || 'San Francisco, CA',
-          joinDate: new Date(userProfile.created_at).toLocaleDateString(),
+          joinDate: new Date(supabaseUser.created_at).toLocaleDateString(),
           greenPoints: userProfile.points || 0,
           carbonHistory: userProfile.carbonHistory || [],
           offsetHistory: userProfile.offsetHistory || [],
@@ -100,6 +130,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
         setUser(appUser);
         setIsLoggedIn(true);
+        console.log('User set in context:', appUser);
+      } else {
+        console.log('No profile found for user ID:', supabaseUser.id);
       }
 
       const { data: carbonDataFromDb, error: carbonError } = await supabase
@@ -108,7 +141,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         .eq('user_id', supabaseUser.id);
 
       if (carbonError) {
-        console.error('Error fetching carbon data:', carbonError);
+        console.error('Carbon data fetch error:', carbonError.message);
         return;
       }
 
