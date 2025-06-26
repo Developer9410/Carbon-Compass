@@ -2,24 +2,17 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, Compass, AlertCircle } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase'; // Adjust path based on your project structure
 
 const LoginPage: React.FC = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-    // Clear error when user starts typing
+    setFormData({ ...formData, [e.target.name]: e.target.value });
     if (error) setError(null);
   };
 
@@ -29,18 +22,24 @@ const LoginPage: React.FC = () => {
     setError(null);
 
     try {
+      console.log('Attempting login with:', formData.email); // Debug log
       const { data, error: authError } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });
 
       if (authError) {
+        console.error('Auth error:', authError.message);
         throw authError;
       }
 
-      if (data.user) {
-        // Redirect to dashboard - the auth state change will handle user profile fetching
+      console.log('Login response:', data); // Debug response
+      if (data.session) {
+        console.log('Session established:', data.session);
         navigate('/dashboard');
+      } else {
+        console.log('No session, possibly email verification pending');
+        setError('Please verify your email before logging in.');
       }
     } catch (error: any) {
       console.error('Login error:', error);
@@ -70,10 +69,7 @@ const LoginPage: React.FC = () => {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-700">
             Or{' '}
-            <Link
-              to="/register"
-              className="font-medium text-primary hover:underline"
-            >
+            <Link to="/register" className="font-medium text-primary hover:underline">
               create a new account
             </Link>
           </p>
