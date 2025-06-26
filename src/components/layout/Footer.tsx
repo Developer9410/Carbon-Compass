@@ -6,9 +6,9 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-white border-t">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+        <div className="flex flex-wrap justify-between items-start gap-6 sm:gap-8">
           {/* Brand and mission */}
-          <div className="md:col-span-1">
+          <div className="w-full sm:w-auto">
             <div className="flex items-center space-x-2 mb-3 sm:mb-4">
               <Compass className="w-5 sm:w-6 h-5 sm:h-6 text-primary" />
               <span className="text-base sm:text-lg font-bold">Carbon Compass</span>
@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
           </div>
           
           {/* Quick links */}
-          <div>
+          <div className="w-full sm:w-auto">
             <h4 className="text-sm sm:text-base font-medium mb-2 sm:mb-4">Features</h4>
             <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
               <li><Link to="/calculator" className="text-gray-600 hover:text-primary">Carbon Calculator</Link></li>
@@ -43,7 +43,7 @@ const Footer: React.FC = () => {
           </div>
           
           {/* Resources */}
-          <div>
+          <div className="w-full sm:w-auto">
             <h4 className="text-sm sm:text-base font-medium mb-2 sm:mb-4">Resources</h4>
             <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
               <li><Link to="/blog" className="text-gray-600 hover:text-primary">Blog</Link></li>
@@ -55,7 +55,7 @@ const Footer: React.FC = () => {
           </div>
           
           {/* Company */}
-          <div>
+          <div className="w-full sm:w-auto">
             <h4 className="text-sm sm:text-base font-medium mb-2 sm:mb-4">Company</h4>
             <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
               <li><Link to="/about" className="text-gray-600 hover:text-primary">About Us</Link></li>
