@@ -6,31 +6,32 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-white border-t">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <div className="flex flex-wrap justify-between items-start gap-6 sm:gap-8">
-          {/* Brand and mission */}
-          <div className="w-full sm:w-auto">
-            <div className="flex items-center space-x-2 mb-3 sm:mb-4">
-              <Compass className="w-5 sm:w-6 h-5 sm:h-6 text-primary" />
-              <span className="text-base sm:text-lg font-bold">Carbon Compass</span>
-            </div>
-            <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
-              Helping individuals and communities track, reduce, and offset their carbon footprint for a more sustainable future.
-            </p>
-            <div className="flex space-x-3 sm:space-x-4">
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors">
-                <Github size={16} sm:size={18} />
-              </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors">
-                <Twitter size={16} sm:size={18} />
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors">
-                <Instagram size={16} sm:size={18} />
-              </a>
-            </div>
+        {/* Brand and Mission at the top */}
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center space-x-2 mb-3 sm:mb-4">
+            <Compass className="w-5 sm:w-6 h-5 sm:h-6 text-primary" />
+            <span className="text-base sm:text-lg font-bold">Carbon Compass</span>
           </div>
-          
+          <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
+            Helping individuals and communities track, reduce, and offset their carbon footprint for a more sustainable future.
+          </p>
+          <div className="flex space-x-3 sm:space-x-4">
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors">
+              <Github size={16} sm:size={18} />
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors">
+              <Twitter size={16} sm:size={18} />
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors">
+              <Instagram size={16} sm:size={18} />
+            </a>
+          </div>
+        </div>
+
+        {/* Features, Resources, and Company stacked below */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Quick links */}
-          <div className="w-full sm:w-auto">
+          <div>
             <h4 className="text-sm sm:text-base font-medium mb-2 sm:mb-4">Features</h4>
             <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
               <li><Link to="/calculator" className="text-gray-600 hover:text-primary">Carbon Calculator</Link></li>
@@ -43,7 +44,7 @@ const Footer: React.FC = () => {
           </div>
           
           {/* Resources */}
-          <div className="w-full sm:w-auto">
+          <div>
             <h4 className="text-sm sm:text-base font-medium mb-2 sm:mb-4">Resources</h4>
             <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
               <li><Link to="/blog" className="text-gray-600 hover:text-primary">Blog</Link></li>
@@ -55,7 +56,7 @@ const Footer: React.FC = () => {
           </div>
           
           {/* Company */}
-          <div className="w-full sm:w-auto">
+          <div>
             <h4 className="text-sm sm:text-base font-medium mb-2 sm:mb-4">Company</h4>
             <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
               <li><Link to="/about" className="text-gray-600 hover:text-primary">About Us</Link></li>
@@ -66,7 +67,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
         
-        <div className="border-t mt-4 sm:mt-6 pt-4 sm:pt-6">
+        <div className="border-t mt-6 sm:mt-8 pt-4 sm:pt-6">
           <div className="flex flex-col sm:flex-row justify-between items-center">
             <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-0">
               © {new Date().getFullYear()} Carbon Compass. All rights reserved.
