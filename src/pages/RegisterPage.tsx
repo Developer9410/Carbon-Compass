@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Eye, EyeOff, Compass, AlertCircle, CheckCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useApp } from '../context/AppContext'; // Import useApp
 
 const RegisterPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -17,13 +18,13 @@ const RegisterPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { setIsLoggedIn } = useApp(); // Access setIsLoggedIn to control state
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
-    // Clear error when user starts typing
     if (error) setError(null);
   };
 
@@ -33,14 +34,12 @@ const RegisterPage: React.FC = () => {
     setError(null);
     setSuccess(null);
 
-    // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       setIsLoading(false);
       return;
     }
 
-    // Validate password strength
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters long');
       setIsLoading(false);
@@ -48,47 +47,29 @@ const RegisterPage: React.FC = () => {
     }
 
     try {
-      // Sign up the user with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
       });
 
-      if (authError) {
-        throw authError;
-      }
+      if (authError) throw authError;
 
       if (authData.user) {
-        // Create user profile in the profiles table
         const { error: profileError } = await supabase
           .from('profiles')
           .insert([
-            {
-              id: authData.user.id,
-              name: formData.name,
-              points: 0,
-              location: 'San Francisco, CA',
-            }
+            { id: authData.user.id, name: formData.name, points: 0, location: 'San Francisco, CA' },
           ]);
 
-        if (profileError) {
-          console.error('Profile creation error:', profileError.message);
-          // Log the error but proceed, as auth user is created
-        }
+        if (profileError) console.error('Profile creation error:', profileError.message);
 
-        setSuccess('Account created successfully! You can now sign in.');
-        
-        // Redirect to login after a short delay
-        setTimeout(() => {
-          navigate('/login'); // Redirect to login instead of dashboard for new users
-        }, 2000);
+        setSuccess('Account created successfully! Please check your email to verify.');
+        setIsLoggedIn(false); // Explicitly set to false to prevent dashboard access
+        setTimeout(() => navigate('/login'), 2000); // Redirect to login
       }
     } catch (error: any) {
       console.error('Registration error:', error);
-      
-      // Handle specific error cases
-      if (error.message === 'User already registered' || 
-          (error.code && error.code === 'user_already_exists')) {
+      if (error.message === 'User already registered' || error.code === 'user_already_exists') {
         setError('This email is already registered. Please try logging in instead.');
       } else if (error.message.includes('Invalid email')) {
         setError('Please enter a valid email address.');
@@ -117,15 +98,10 @@ const RegisterPage: React.FC = () => {
               <span className="text-2xl font-bold text-gray-900">Carbon Compass</span>
             </Link>
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Create your account</h2>
           <p className="mt-2 text-center text-sm text-gray-700">
             Or{' '}
-            <Link
-              to="/login"
-              className="font-medium text-primary hover:underline"
-            >
+            <Link to="/login" className="font-medium text-primary hover:underline">
               sign in to your existing account
             </Link>
           </p>
@@ -161,9 +137,7 @@ const RegisterPage: React.FC = () => {
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-800">
-                Full name
-              </label>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-800">Full name</label>
               <div className="mt-1 relative">
                 <input
                   id="name"
@@ -181,9 +155,7 @@ const RegisterPage: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-800">
-                Email address
-              </label>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-800">Email address</label>
               <div className="mt-1 relative">
                 <input
                   id="email"
@@ -201,9 +173,7 @@ const RegisterPage: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-800">
-                Password
-              </label>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-800">Password</label>
               <div className="mt-1 relative">
                 <input
                   id="password"
@@ -228,9 +198,7 @@ const RegisterPage: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-800">
-                Confirm password
-              </label>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-800">Confirm password</label>
               <div className="mt-1 relative">
                 <input
                   id="confirmPassword"
@@ -265,13 +233,9 @@ const RegisterPage: React.FC = () => {
             />
             <label htmlFor="agree-terms" className="ml-2 block text-sm text-gray-800">
               I agree to the{' '}
-              <Link to="/terms" className="text-primary hover:underline">
-                Terms of Service
-              </Link>{' '}
+              <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link>{' '}
               and{' '}
-              <Link to="/privacy" className="text-primary hover:underline">
-                Privacy Policy
-              </Link>
+              <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
             </label>
           </div>
 
