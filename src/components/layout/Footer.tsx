@@ -7,18 +7,82 @@ const Footer: React.FC = () => {
     <footer className="bg-white border-t">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand and mission, Quick links, Resources, Company sections remain unchanged */}
+          {/* Brand and mission */}
+          <div className="md:col-span-1">
+            <div className="flex items-center space-x-2 mb-4">
+              <Compass className="w-6 h-6 text-primary" />
+              <span className="text-lg font-bold">Carbon Compass</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-4">
+              Helping individuals and communities track, reduce, and offset their carbon footprint for a more sustainable future.
+            </p>
+            <div className="flex space-x-4">
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors">
+                <Github size={18} />
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors">
+                <Twitter size={18} />
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors">
+                <Instagram size={18} />
+              </a>
+            </div>
+          </div>
+          
+          {/* Quick links */}
+          <div>
+            <h4 className="font-medium mb-4">Features</h4>
+            <ul className="space-y-2 text-sm">
+              <li><Link to="/calculator" className="text-gray-600 hover:text-primary">Carbon Calculator</Link></li>
+              <li><Link to="/dashboard" className="text-gray-600 hover:text-primary">Dashboard</Link></li>
+              <li><Link to="/offset" className="text-gray-600 hover:text-primary">Offset Projects</Link></li>
+              <li><Link to="/community" className="text-gray-600 hover:text-primary">Community</Link></li>
+              <li><Link to="/challenges" className="text-gray-600 hover:text-primary">Challenges</Link></li>
+              <li><Link to="/rewards" className="text-gray-600 hover:text-primary">Green Rewards</Link></li>
+            </ul>
+          </div>
+          
+          {/* Resources */}
+          <div>
+            <h4 className="font-medium mb-4">Resources</h4>
+            <ul className="space-y-2 text-sm">
+              <li><Link to="/blog" className="text-gray-600 hover:text-primary">Blog</Link></li>
+              <li><Link to="/climate-science" className="text-gray-600 hover:text-primary">Climate Science</Link></li>
+              <li><Link to="/offset-guide" className="text-gray-600 hover:text-primary">Carbon Offset Guide</Link></li>
+              <li><Link to="/sustainability-tips" className="text-gray-600 hover:text-primary">Sustainability Tips</Link></li>
+              <li><Link to="/api-docs" className="text-gray-600 hover:text-primary">API Documentation</Link></li>
+            </ul>
+          </div>
+          
+          {/* Company */}
+          <div>
+            <h4 className="font-medium mb-4">Company</h4>
+            <ul className="space-y-2 text-sm">
+              <li><Link to="/about" className="text-gray-600 hover:text-primary">About Us</Link></li>
+              <li><Link to="/contact" className="text-gray-600 hover:text-primary">Contact Us</Link></li>
+              <li><Link to="/privacy" className="text-gray-600 hover:text-primary">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="text-gray-600 hover:text-primary">Terms of Service</Link></li>
+            </ul>
+          </div>
         </div>
         
         <div className="border-t mt-8 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-gray-600 mb-4 md:mb-0">
-              © {new Date().getFullYear()} Carbon Compass. All rights reserved.
+              &copy; {new Date().getFullYear()} Carbon Compass. All rights reserved.
             </p>
             <div className="flex items-center space-x-4">
               <p className="text-sm text-gray-600 flex items-center">
                 Made with <Heart size={14} className="mx-1 text-error" /> for a greener planet
               </p>
+              <a 
+                href="https://bolt.new/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-xs text-gray-500 hover:text-primary transition-colors"
+              >
+                Built with Bolt.new
+              </a>
             </div>
           </div>
         </div>
