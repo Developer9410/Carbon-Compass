@@ -1,3 +1,4 @@
+// src/components/ui/BoltBadge.tsx
 import React from 'react';
 import { motion } from 'framer-motion';
 
@@ -7,7 +8,7 @@ const BoltBadge: React.FC = () => {
       href="https://bolt.new/"
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed top-4 right-4 z-50 group"
+      className="group inline-block" // <--- CHANGED THIS LINE
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3, delay: 0.5 }}
@@ -15,14 +16,12 @@ const BoltBadge: React.FC = () => {
       whileTap={{ scale: 0.95 }}
     >
       <div className="relative">
-        {/* Use the black circle badge for light backgrounds */}
-        <img 
+        <img
           src="/black_circle_360x360.png"
           alt="Built with Bolt.new"
           className="w-12 h-12 md:w-14 md:h-14 hover:shadow-xl transition-shadow duration-300 rounded-full"
         />
-        
-        {/* Tooltip */}
+
         <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
           <div className="bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap">
             Built with Bolt.new
