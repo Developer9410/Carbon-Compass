@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, Compass, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useApp } from '../context/AppContext';
 
 const LoginPage: React.FC = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -10,6 +11,14 @@ const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { user, isLoggedIn } = useApp();
+
+  useEffect(() => {
+    if (isLoggedIn && user) {
+      console.log('Redirecting to dashboard due to isLoggedIn:', isLoggedIn);
+      navigate('/dashboard');
+    }
+  }, [isLoggedIn, user, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -36,8 +45,7 @@ const LoginPage: React.FC = () => {
       console.log('Login response:', data);
       if (data.session) {
         console.log('Session established:', data.session);
-        // Force redirect with a small delay to ensure state propagation
-        setTimeout(() => navigate('/dashboard'), 100);
+        // Navigation is now handled by useEffect based on isLoggedIn
       } else {
         console.log('No session, possibly email verification pending');
         setError('Please verify your email before logging in.');
