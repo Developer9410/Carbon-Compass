@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Car, Home, Utensils, ArrowRight, Info, Save, PlusCircle } from 'lucide-react';
+import { Info } from 'lucide-react'; // Keeping only necessary icons
 import { useApp } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import { TransportInput, EnergyInput, DietInput, CarbonData } from '../types';
 import { supabase } from '../lib/supabase';
 
 const CalculatorPage: React.FC = () => {
-  const { addCarbonData, user } = useApp();
+  const { addCarbonData, user, updateUserPoints } = useApp(); // Added updateUserPoints
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'transport' | 'energy' | 'diet'>('transport');
   const [transportInput, setTransportInput] = useState<TransportInput>({
@@ -33,6 +33,7 @@ const CalculatorPage: React.FC = () => {
   const [calculationResult, setCalculationResult] = useState<any>(null);
   const [showResults, setShowResults] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [showImplementationMsg, setShowImplementationMsg] = useState(false); // For implementation button
 
   const handleTabChange = (tab: 'transport' | 'energy' | 'diet') => {
     setActiveTab(tab);
@@ -107,6 +108,10 @@ const CalculatorPage: React.FC = () => {
           },
         };
         addCarbonData(carbonData);
+        // Attempt to update points immediately
+        if (user.id && result.data.pointsEarned) {
+          await updateUserPoints(user.id, result.data.pointsEarned);
+        }
       }
     } catch (error) {
       console.error('Error calculating carbon footprint:', error);
@@ -149,16 +154,27 @@ const CalculatorPage: React.FC = () => {
     });
   };
 
+  const handleImplementAction = () => {
+    setShowImplementationMsg(true);
+    // Simulate points addition for implementation (adjust logic as needed)
+    if (user.id) {
+      updateUserPoints(user.id, 85); // Example: 85 points for reducing red meat
+    }
+    setTimeout(() => setShowImplementationMsg(false), 5000); // Hide after 5 seconds
+  };
+
   return (
     <div className="container mx-auto max-w-4xl px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="mb-8"
+        className="mb-8 text-center"
       >
-        <h1 className="text-3xl font-bold mb-2">Carbon Footprint Calculator</h1>
-        <p className="text-gray-600">Calculate your carbon footprint by providing information about your lifestyle and habits.</p>
+        <div className="bg-primary-light/10 rounded-xl p-6 inline-block">
+          <img src="/logo.png" alt="Logo" className="h-16" /> {/* Replace with your logo path */}
+        </div>
+        <p className="text-gray-600 mt-2">Track your carbon footprint and take action to reduce it!</p>
       </motion.div>
 
       {!showResults ? (
@@ -167,19 +183,19 @@ const CalculatorPage: React.FC = () => {
             <TabButton
               active={activeTab === 'transport'}
               onClick={() => handleTabChange('transport')}
-              icon={<Car size={18} />}
+              icon={<Info size={18} />} // Simplified icon
               label="Transport"
             />
             <TabButton
               active={activeTab === 'energy'}
               onClick={() => handleTabChange('energy')}
-              icon={<Home size={18} />}
+              icon={<Info size={18} />}
               label="Energy"
             />
             <TabButton
               active={activeTab === 'diet'}
               onClick={() => handleTabChange('diet')}
-              icon={<Utensils size={18} />}
+              icon={<Info size={18} />}
               label="Diet"
             />
           </div>
@@ -236,20 +252,24 @@ const CalculatorPage: React.FC = () => {
                 {calculationResult?.totalEmissions} <span className="text-2xl">kg CO₂e</span>
               </p>
               <p className="text-gray-500">per month</p>
+              <div className="flex justify-center items-center mt-4">
+                <Info size={18} className="text-gray-500 mr-2" />
+                <span className="text-gray-500">0% offset</span> {/* Fixed position */}
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               <div className="bg-blue-50 rounded-lg p-4">
-                <Car className="w-6 h-6 text-blue-500 mb-2 mx-auto" />
+                <Info className="w-6 h-6 text-blue-500 mb-2 mx-auto" />
                 <p className="font-medium">Transport</p>
                 <p className="text-gray-600 text-sm">{calculationResult?.breakdown.transport} kg CO₂e</p>
               </div>
               <div className="bg-orange-50 rounded-lg p-4">
-                <Home className="w-6 h-6 text-orange-500 mb-2 mx-auto" />
+                <Info className="w-6 h-6 text-orange-500 mb-2 mx-auto" />
                 <p className="font-medium">Energy</p>
                 <p className="text-gray-600 text-sm">{calculationResult?.breakdown.energy} kg CO₂e</p>
               </div>
               <div className="bg-green-50 rounded-lg p-4">
-                <Utensils className="w-6 h-6 text-green-500 mb-2 mx-auto" />
+                <Info className="w-6 h-6 text-green-500 mb-2 mx-auto" />
                 <p className="font-medium">Diet</p>
                 <p className="text-gray-600 text-sm">{calculationResult?.breakdown.diet} kg CO₂e</p>
               </div>
@@ -261,7 +281,20 @@ const CalculatorPage: React.FC = () => {
               </div>
             )}
 
-            <div className="bg-primary-light/10 rounded-lg p-4 mb-6 flex items-start">
+            <button
+              onClick={handleImplementAction}
+              className="btn btn-primary mt-4"
+            >
+              Implement Action
+            </button>
+
+            {showImplementationMsg && (
+              <div className="bg-green-100 text-green-800 p-4 rounded-lg mt-4 text-center">
+                Great choice! You've decided to implement: "Reduce red meat consumption". This could save you approximately 85 kg CO₂e per month. We'll track your progress and award you Green Points for taking action!
+              </div>
+            )}
+
+            <div className="bg-primary-light/10 rounded-lg p-4 mb-6 flex items-start mt-4">
               <Info className="w-5 h-5 text-primary mt-0.5 mr-3 flex-shrink-0" />
               <p className="text-sm text-left">
                 The average carbon footprint is approximately 500 kg CO₂e per month.
