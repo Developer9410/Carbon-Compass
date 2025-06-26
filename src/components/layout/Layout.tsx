@@ -65,8 +65,8 @@ const Layout = () => {
         </main>
       </div>
       <Footer />
-      {/* Adjusted badge position to bottom-right */}
-      <BoltBadge className="fixed bottom-4 right-4 md:bottom-6 md:right-6 lg:bottom-12 lg:right-12 z-40" />
+      {/* Repositioned badge to align with Login button */}
+      <BoltBadge className="fixed top-16 right-1/2 transform translate-x-1/2 md:top-20 md:right-1/2 md:transform md:translate-x-1/4 lg:top-24 lg:right-1/2 lg:transform lg:translate-x-1/3 z-40" />
     </div>
   );
 };
