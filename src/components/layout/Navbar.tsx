@@ -17,28 +17,28 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [notifications, setNotifications] = useState([
+  const [notifications] = useState([
     {
       id: '1',
       title: 'Challenge Completed!',
       message: 'You completed the "Walk 10,000 steps" challenge.',
       time: 'Just now',
-      read: false
+      read: false,
     },
     {
       id: '2',
       title: 'New Suggestion',
       message: 'We have new ways for you to reduce your footprint.',
       time: '2 hours ago',
-      read: false
+      read: false,
     },
     {
       id: '3',
       title: 'Community Update',
       message: 'Someone replied to your comment.',
       time: 'Yesterday',
-      read: true
-    }
+      read: true,
+    },
   ]);
 
   const totalOffsetAmount = user?.offsetHistory?.reduce((sum, offset) => sum + offset.amount, 0) || 0;
@@ -91,7 +91,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <nav 
+    <nav
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
         scrolled ? 'bg-white shadow-md' : 'bg-transparent'
       }`}
@@ -100,7 +100,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
         <div className="flex flex-col items-center justify-between h-auto py-2">
           {/* Logo and Brand with BoltBadge */}
           <div className="flex items-center space-x-2 mb-4">
-            <button 
+            <button
               className="md:hidden mr-2 p-2 rounded-lg hover:bg-gray-100"
               onClick={toggleSidebar}
             >
@@ -119,13 +119,13 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
               <NavLink to="/calculator" current={location.pathname === '/calculator'}>
                 Calculator
               </NavLink>
-              <NavLink to="/dashboard" current={location.pathname === '/dashboard'>
+              <NavLink to="/dashboard" current={location.pathname === '/dashboard'}>
                 Dashboard
               </NavLink>
-              <NavLink to="/offset" current={location.pathname === '/offset'>
+              <NavLink to="/offset" current={location.pathname === '/offset'}>
                 Offset
               </NavLink>
-              <NavLink to="/community" current={location.pathname === '/community'>
+              <NavLink to="/community" current={location.pathname === '/community'}>
                 Community
               </NavLink>
             </div>
@@ -135,7 +135,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
           <div className="flex items-center space-x-3">
             {user && (
               <div className="hidden sm:block">
-                <CarbonNeutralBadge 
+                <CarbonNeutralBadge
                   isNeutral={isNeutral}
                   offsetPercentage={offsetPercentage}
                   size="sm"
@@ -143,10 +143,10 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
                 />
               </div>
             )}
-            
+
             {isLoggedIn && (
               <div className="relative">
-                <button 
+                <button
                   onClick={() => setNotificationsOpen(!notificationsOpen)}
                   className="p-2 rounded-full hover:bg-gray-100 text-gray-700"
                 >
@@ -157,39 +157,39 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
                     </span>
                   )}
                 </button>
-                
+
                 {notificationsOpen && (
                   <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 z-10 border">
                     <div className="px-4 py-2 border-b border-gray-100 flex items-center justify-between">
                       <h3 className="font-medium text-gray-900">Notifications</h3>
-                      <button 
+                      <button
                         onClick={handleCloseNotifications}
                         className="p-1 hover:bg-gray-100 rounded-full text-gray-500"
                       >
                         <X size={16} />
                       </button>
                     </div>
-                    
+
                     <div className="px-4 py-2 border-b border-gray-100 flex gap-2">
-                      <button 
+                      <button
                         onClick={handleMarkAllRead}
                         className="text-xs text-primary hover:underline"
                       >
                         Mark all read
                       </button>
                       <span className="text-gray-300">•</span>
-                      <button 
+                      <button
                         onClick={handleClearAll}
                         className="text-xs text-red-600 hover:underline"
                       >
                         Clear all
                       </button>
                     </div>
-                    
+
                     <div className="max-h-96 overflow-y-auto">
                       {notifications.length > 0 ? (
                         notifications.map((notification) => (
-                          <NotificationItem 
+                          <NotificationItem
                             key={notification.id}
                             title={notification.title}
                             message={notification.message}
@@ -204,10 +204,10 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
                         </div>
                       )}
                     </div>
-                    
+
                     {notifications.length > 0 && (
                       <div className="px-4 py-2 border-t border-gray-100 text-center">
-                        <button 
+                        <button
                           onClick={handleViewAllNotifications}
                           className="text-primary text-sm font-medium hover:underline"
                         >
@@ -219,14 +219,14 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
                 )}
               </div>
             )}
-            
+
             <div className="relative ml-2">
               {isLoggedIn ? (
                 <div className="flex items-center space-x-2">
                   <Link to="/profile" className="flex items-center space-x-2">
-                    <img 
-                      src={user?.avatarUrl} 
-                      alt={user?.name} 
+                    <img
+                      src={user?.avatarUrl}
+                      alt={user?.name}
                       className="w-8 h-8 rounded-full object-cover border border-gray-200"
                     />
                     <span className="hidden md:block text-sm font-medium text-gray-900">
@@ -243,14 +243,14 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
               ) : (
                 <div className="flex flex-col items-center space-y-2">
                   <div className="flex items-center space-x-2">
-                    <Link 
-                      to="/login" 
+                    <Link
+                      to="/login"
                       className="text-sm font-medium text-gray-800 hover:text-primary px-3 py-2 rounded-md"
                     >
                       Login
                     </Link>
-                    <Link 
-                      to="/register" 
+                    <Link
+                      to="/register"
                       className="btn btn-primary text-sm px-4 py-2"
                     >
                       Register
@@ -277,8 +277,8 @@ const NavLink: React.FC<NavLinkProps> = ({ to, current, children }) => {
     <Link
       to={to}
       className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-        current 
-          ? 'text-primary bg-primary-light/20' 
+        current
+          ? 'text-primary bg-primary-light/20'
           : 'text-gray-800 hover:text-primary hover:bg-gray-50'
       }`}
     >
