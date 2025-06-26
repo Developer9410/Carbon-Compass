@@ -34,7 +34,7 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
-          <Route path="calculator" element={<CalculatorPage />} />
+          <Route path="calculator" element={<PrivateRoute><CalculatorPage /><PrivateRoute>} />
           <Route path="dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
           <Route path="profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
           <Route path="rewards" element={<PrivateRoute><RewardsPage /></PrivateRoute> } />
