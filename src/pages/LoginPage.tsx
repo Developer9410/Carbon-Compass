@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, Compass, AlertCircle } from 'lucide-react';
-import { supabase } from '../lib/supabase'; // Adjust path based on your project structure
+import { supabase } from '../lib/supabase';
 
 const LoginPage: React.FC = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -22,7 +22,7 @@ const LoginPage: React.FC = () => {
     setError(null);
 
     try {
-      console.log('Attempting login with:', formData.email); // Debug log
+      console.log('Attempting login with:', formData.email);
       const { data, error: authError } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
@@ -33,10 +33,11 @@ const LoginPage: React.FC = () => {
         throw authError;
       }
 
-      console.log('Login response:', data); // Debug response
+      console.log('Login response:', data);
       if (data.session) {
         console.log('Session established:', data.session);
-        navigate('/dashboard');
+        // Force redirect with a small delay to ensure state propagation
+        setTimeout(() => navigate('/dashboard'), 100);
       } else {
         console.log('No session, possibly email verification pending');
         setError('Please verify your email before logging in.');
