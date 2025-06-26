@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { mockCommunityData } from '../data/mockData';
 import { User, CarbonData, CommunityPost } from '../types';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase'; // Adjust path based on your project structure
 import { User as SupabaseUser } from '@supabase/supabase-js';
 
 interface AppContextType {
@@ -31,16 +31,21 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [totalFootprint, setTotalFootprint] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Fetch user session and data on app load
   useEffect(() => {
     const checkSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
+        console.log('Initial session check:', session); // Debug log
         if (session?.user) {
           await fetchUserProfileAndData(session.user);
+        } else {
+          setUser(null);
+          setIsLoggedIn(false);
         }
       } catch (error) {
         console.error('Error checking session:', error);
+        setUser(null);
+        setIsLoggedIn(false);
       } finally {
         setLoading(false);
       }
@@ -48,8 +53,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     checkSession();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session); // Debug log
       if (event === 'SIGNED_IN' && session?.user) {
         await fetchUserProfileAndData(session.user);
       } else if (event === 'SIGNED_OUT') {
@@ -63,10 +68,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return () => subscription.unsubscribe();
   }, []);
 
-  // Fetch user profile and carbon data
   const fetchUserProfileAndData = async (supabaseUser: SupabaseUser) => {
     try {
-      // Fetch user profile
       const { data: userProfile, error: profileError } = await supabase
         .from('users')
         .select('*')
@@ -99,7 +102,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setIsLoggedIn(true);
       }
 
-      // Fetch carbon data
       const { data: carbonDataFromDb, error: carbonError } = await supabase
         .from('carbon_data')
         .select('id, date, category, activity, amount, details, inserted_at')
@@ -127,13 +129,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
-  // Calculate total carbon footprint
   useEffect(() => {
     const total = carbonData.reduce((sum, item) => sum + item.amount, 0);
     setTotalFootprint(total);
   }, [carbonData]);
 
-  // Add carbon data to local state only (edge function handles DB insert)
   const addCarbonData = (data: CarbonData) => {
     if (!data.id) {
       console.error('No ID provided for carbon data');
@@ -168,21 +168,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const logout = async (): Promise<void> => {
     try {
       const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Logout error:', error);
-        throw error;
-      }
-
-      // Clear local state
+      if (error) throw error;
       setUser(null);
       setIsLoggedIn(false);
       setCarbonData([]);
       setCommunityPosts(mockCommunityData);
       setTotalFootprint(0);
-
-      // Clear any stored data
       localStorage.removeItem('supabase.auth.token');
-
       console.log('User logged out successfully');
     } catch (error) {
       console.error('Logout error:', error);
@@ -218,8 +210,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
 export const useApp = (): AppContextType => {
   const context = useContext(AppContext);
-  if (!context) {
-    throw new Error('useApp must be used within an AppProvider');
-  }
+  if (!context) throw new Error('useApp must be used within an AppProvider');
   return context;
 };
