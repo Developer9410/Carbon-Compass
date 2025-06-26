@@ -15,7 +15,7 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (isLoggedIn && user) {
-      console.log('Redirecting to dashboard due to isLoggedIn:', isLoggedIn);
+      console.log('Redirecting to dashboard due to isLoggedIn:', isLoggedIn, 'User:', user);
       navigate('/dashboard');
     }
   }, [isLoggedIn, user, navigate]);
@@ -44,8 +44,7 @@ const LoginPage: React.FC = () => {
 
       console.log('Login response:', data);
       if (data.session) {
-        console.log('Session established:', data.session);
-        // Navigation is now handled by useEffect based on isLoggedIn
+        console.log('Session established, waiting for AppContext to redirect:', data.session);
       } else {
         console.log('No session, possibly email verification pending');
         setError('Please verify your email before logging in.');
@@ -54,7 +53,7 @@ const LoginPage: React.FC = () => {
       console.error('Login error:', error);
       setError(error.message || 'An error occurred during login');
     } finally {
-      setIsLoading(false);
+    setIsLoading(false);
     }
   };
 
