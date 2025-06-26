@@ -7,7 +7,7 @@ import BoltBadge from '../ui/BoltBadge';
 import { motion } from 'framer-motion';
 import { useApp } from '../../context/AppContext';
 
-const Layout: React.FC = () => {
+const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { loading } = useApp();
   const location = useLocation();
@@ -65,7 +65,8 @@ const Layout: React.FC = () => {
         </main>
       </div>
       <Footer />
-      <BoltBadge className="fixed top-4 right-4 md:top-6 md:right-6 lg:top-12 lg:right-12 z-40" />
+      {/* Adjusted badge position to bottom-right */}
+      <BoltBadge className="fixed bottom-4 right-4 md:bottom-6 md:right-6 lg:bottom-12 lg:right-12 z-40" />
     </div>
   );
 };
