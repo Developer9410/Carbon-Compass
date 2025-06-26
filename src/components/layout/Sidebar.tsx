@@ -25,7 +25,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
 
   return (
     <>
-      {/* Mobile backdrop */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -39,15 +38,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
         )}
       </AnimatePresence>
       
-      {/* Sidebar - Fixed on desktop, sliding on mobile */}
       <motion.aside
-        className="fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 md:z-0 md:static md:transform-none md:h-screen md:sticky top-0"
+        className="fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 md:static md:h-screen md:w-64"
         initial={isOpen ? "open" : "closed"}
         animate={isOpen ? "open" : "closed"}
         variants={sidebarVariants}
       >
         <div className="flex flex-col h-full overflow-y-auto">
-          {/* Mobile header with close button */}
           <div className="md:hidden flex items-center justify-between p-4 border-b">
             <span className="font-semibold">Menu</span>
             <button onClick={closeSidebar} className="p-1 rounded-full hover:bg-gray-100">
@@ -55,7 +52,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
             </button>
           </div>
           
-          {/* User profile summary */}
           {user && (
             <div className="p-4 border-b">
               <div className="flex items-center space-x-3">
@@ -76,8 +72,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
                   </div>
                 </div>
               </div>
-              
-              {/* Progress bar */}
               <div className="mt-3">
                 <div className="flex justify-between text-xs mb-1">
                   <span>Daily streak</span>
@@ -93,7 +87,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
             </div>
           )}
           
-          {/* Navigation Links */}
           <nav className="p-4 flex-1">
             <ul className="space-y-1">
               <NavItem 
@@ -165,7 +158,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
             </ul>
           </nav>
           
-          {/* App version */}
           <div className="p-4 text-xs text-gray-500 border-t">
             <p>Carbon Compass v0.1.0</p>
           </div>
