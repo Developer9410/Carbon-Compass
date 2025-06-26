@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Compass, Github, Twitter, Instagram, Heart } from 'lucide-react';
+import { Compass, Github, Twitter, Instagram, Heart, Bolt } from 'lucide-react';
+import BoltBadge from '../ui/BoltBadge';
 
 const Footer: React.FC = () => {
   return (
@@ -76,6 +77,12 @@ const Footer: React.FC = () => {
               <p className="text-xs sm:text-sm text-gray-600 flex items-center">
                 Made with <Heart size={12} sm:size={14} className="mx-1 text-error" /> for a greener planet
               </p>
+              <div className="flex items-center space-x-1">
+                <BoltBadge className="h-5 w-5" />
+                <a href="https://bolt.new/" target="_blank" rel="noopener noreferrer" className="text-xs sm:text-sm text-gray-600 hover:text-primary">
+                  Built on Bolt.new
+                </a>
+              </div>
             </div>
           </div>
         </div>
