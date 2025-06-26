@@ -39,9 +39,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
         )}
       </AnimatePresence>
       
-      {/* Sidebar - Mobile (sliding) and Desktop (fixed) */}
+      {/* Sidebar - Fixed on desktop, sliding on mobile */}
       <motion.aside
-        className="fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 md:z-0 md:static md:translate-x-0"
+        className="fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 md:z-0 md:static md:transform-none md:h-screen md:sticky top-0"
         initial={isOpen ? "open" : "closed"}
         animate={isOpen ? "open" : "closed"}
         variants={sidebarVariants}
