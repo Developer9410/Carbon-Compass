@@ -12,12 +12,11 @@ const Layout: React.FC = () => {
   const { loading } = useApp();
   const location = useLocation();
 
-  // Set sidebar open by default on desktop screens (md and above)
   useEffect(() => {
     const handleResize = () => {
-      setSidebarOpen(window.innerWidth >= 768); // 768px is Tailwind's 'md' breakpoint
+      setSidebarOpen(window.innerWidth >= 768);
     };
-    handleResize(); // Set initial state
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -26,7 +25,6 @@ const Layout: React.FC = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Page transition animations
   const pageVariants = {
     initial: { opacity: 0, y: 20 },
     in: { opacity: 1, y: 0 },
@@ -67,8 +65,7 @@ const Layout: React.FC = () => {
         </main>
       </div>
       <Footer />
-      {/* Bolt.new Badge - Adjusted to avoid overlapping with buttons */}
-      <BoltBadge className="fixed top-4 right-4 z-50 md:top-6 md:right-6 lg:top-8 lg:right-8" />
+      <BoltBadge className="fixed top-4 right-4 md:top-6 md:right-6 lg:top-12 lg:right-12 z-40" />
     </div>
   );
 };
