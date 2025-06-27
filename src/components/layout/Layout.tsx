@@ -12,17 +12,13 @@ const Layout: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const handleResize = () => {
-      setSidebarOpen(window.innerWidth >= 768);
-    };
+    const handleResize = () => setSidebarOpen(window.innerWidth >= 768);
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   const pageVariants = {
     initial: { opacity: 0, y: 20 },
@@ -49,7 +45,7 @@ const Layout: React.FC = () => {
       <Navbar toggleSidebar={toggleSidebar} />
       <div className="flex flex-1">
         <Sidebar isOpen={sidebarOpen} closeSidebar={() => setSidebarOpen(false)} />
-        <main className="flex-1 px-4 py-6 md:px-8 lg:px-12 relative overflow-auto">
+        <main className="flex-1 px-4 py-6 md:px-8 lg:px-12 relative overflow-auto w-full">
           <motion.div
             key={location.pathname}
             initial="initial"
@@ -57,7 +53,7 @@ const Layout: React.FC = () => {
             exit="exit"
             variants={pageVariants}
             transition={pageTransition}
-            className="h-full"
+            className="w-full"
           >
             <Outlet />
           </motion.div>
