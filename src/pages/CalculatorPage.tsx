@@ -214,29 +214,115 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; icon: React.Re
 
 const TransportForm: React.FC<{ input: TransportInput; setInput: (input: TransportInput) => void }> = ({ input, setInput }) => (
   <div className="space-y-4">
-    <div><label className="block text-sm font-medium text-gray-700 mb-1">Transport Type</label><select value={input.type} onChange={(e) => setInput({ ...input, type: e.target.value })} className="input w-full"><option value="car">Car</option><option value="bus">Bus</option><option value="train">Train</option><option value="plane">Plane</option><option value="bike">Bike</option><option value="walk">Walk</option></select></div>
-    <div><label className="block text-sm font-medium text-gray-700 mb-1">Distance (km)</label><input type="number" value={input.distance} onChange={(e) => setInput({ ...input, distance: parseFloat(e.target.value) || 0 })} className="input w-full" min="0" /></div>
-    <div><label className="block text-sm font-medium text-gray-700 mb-1">Frequency</label><select value={input.frequency} onChange={(e) => setInput({ ...input, frequency: e.target.value })} className="input w-full"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option><option value="once">Once</option></select></div>
-    {input.type === 'car' && (<><div><label className="block text-sm font-medium text-gray-700 mb-1">Fuel Type</label><select value={input.fuelType} onChange={(e) => setInput({ ...input, fuelType: e.target.value })} className="input w-full"><option value="gasoline">Gasoline</option><option value="diesel">Diesel</option><option value="electric">Electric</option><option value="hybrid">Hybrid</option></select></div><div><label className="block text-sm font-medium text-gray-700 mb-1">Number of Passengers</label><input type="number" value={input.passengers} onChange={(e) => setInput({ ...input, passengers: parseInt(e.target.value) || 1 })} className="input w-full" min="1" /></div></>)}
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Transport Type</label>
+      <select value={input.type} onChange={(e) => setInput({ ...input, type: e.target.value as 'car' | 'bus' | 'train' | 'plane' | 'bike' | 'walk' })} className="input w-full">
+        <option value="car">Car</option>
+        <option value="bus">Bus</option>
+        <option value="train">Train</option>
+        <option value="plane">Plane</option>
+        <option value="bike">Bike</option>
+        <option value="walk">Walk</option>
+      </select>
+    </div>
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Distance (km)</label>
+      <input type="number" value={input.distance} onChange={(e) => setInput({ ...input, distance: parseFloat(e.target.value) || 0 })} className="input w-full" min="0" />
+    </div>
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Frequency</label>
+      <select value={input.frequency} onChange={(e) => setInput({ ...input, frequency: e.target.value as 'daily' | 'weekly' | 'monthly' | 'once' })} className="input w-full">
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+        <option value="once">Once</option>
+      </select>
+    </div>
+    {input.type === 'car' && (
+      <>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Fuel Type</label>
+          <select value={input.fuelType} onChange={(e) => setInput({ ...input, fuelType: e.target.value as 'gasoline' | 'diesel' | 'electric' | 'hybrid' })} className="input w-full">
+            <option value="gasoline">Gasoline</option>
+            <option value="diesel">Diesel</option>
+            <option value="electric">Electric</option>
+            <option value="hybrid">Hybrid</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Number of Passengers</label>
+          <input type="number" value={input.passengers} onChange={(e) => setInput({ ...input, passengers: parseInt(e.target.value) || 1 })} className="input w-full" min="1" />
+        </div>
+      </>
+    )}
   </div>
 );
 
 const EnergyForm: React.FC<{ input: EnergyInput; setInput: (input: EnergyInput) => void }> = ({ input, setInput }) => (
   <div className="space-y-4">
-    <div><label className="block text-sm font-medium text-gray-700 mb-1">Energy Type</label><select value={input.type} onChange={(e) => setInput({ ...input, type: e.target.value })} className="input w-full"><option value="electricity">Electricity</option><option value="heating">Heating</option><option value="cooling">Cooling</option></select></div>
-    <div><label className="block text-sm font-medium text-gray-700 mb-1">Amount</label><input type="number" value={input.amount} onChange={(e) => setInput({ ...input, amount: parseFloat(e.target.value) || 0 })} className="input w-full" min="0" /></div>
-    <div><label className="block text-sm font-medium text-gray-700 mb-1">Unit</label><select value={input.unit} onChange={(e) => setInput({ ...input, unit: e.target.value })} className="input w-full"><option value="kWh">kWh</option></select></div>
-    <div><label className="flex items-center"><input type="checkbox" checked={input.renewable} onChange={(e) => setInput({ ...input, renewable: e.target.checked })} className="mr-2 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded" /><span className="text-sm font-medium text-gray-700">Renewable Source</span></label></div>
-    <div><label className="block text-sm font-medium text-gray-700 mb-1">Period</label><select value={input.period} onChange={(e) => setInput({ ...input, period: e.target.value })} className="input w-full"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></div>
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Energy Type</label>
+      <select value={input.type} onChange={(e) => setInput({ ...input, type: e.target.value as 'electricity' | 'heating' | 'cooling' })} className="input w-full">
+        <option value="electricity">Electricity</option>
+        <option value="heating">Heating</option>
+        <option value="cooling">Cooling</option>
+      </select>
+    </div>
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+      <input type="number" value={input.amount} onChange={(e) => setInput({ ...input, amount: parseFloat(e.target.value) || 0 })} className="input w-full" min="0" />
+    </div>
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+      <select value={input.unit} onChange={(e) => setInput({ ...input, unit: e.target.value as 'kWh' })} className="input w-full">
+        <option value="kWh">kWh</option>
+      </select>
+    </div>
+    <div>
+      <label className="flex items-center">
+        <input type="checkbox" checked={input.renewable} onChange={(e) => setInput({ ...input, renewable: e.target.checked })} className="mr-2 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded" />
+        <span className="text-sm font-medium text-gray-700">Renewable Source</span>
+      </label>
+    </div>
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Period</label>
+      <select value={input.period} onChange={(e) => setInput({ ...input, period: e.target.value as 'daily' | 'weekly' | 'monthly' })} className="input w-full">
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+      </select>
+    </div>
   </div>
 );
 
 const DietForm: React.FC<{ input: DietInput; setInput: (input: DietInput) => void }> = ({ input, setInput }) => (
   <div className="space-y-4">
-    <div><label className="block text-sm font-medium text-gray-700 mb-1">Meat Consumption</label><select value={input.meatConsumption} onChange={(e) => setInput({ ...input, meatConsumption: e.target.value })} className="input w-full"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option><option value="none">None</option></select></div>
-    <div><label className="block text-sm font-medium text-gray-700 mb-1">Dairy Consumption</label><select value={input.dairyConsumption} onChange={(e) => setInput({ ...input, dairyConsumption: e.target.value })} className="input w-full"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option><option value="none">None</option></select></div>
-    <div><label className="block text-sm font-medium text-gray-700 mb-1">Local Food Percentage (%)</label><input type="number" value={input.localFoodPercentage} onChange={(e) => setInput({ ...input, localFoodPercentage: parseFloat(e.target.value) || 0 })} className="input w-full" min="0" max="100" /></div>
-    <div><label className="block text-sm font-medium text-gray-700 mb-1">Waste Percentage (%)</label><input type="number" value={input.wastePercentage} onChange={(e) => setInput({ ...input, wastePercentage: parseFloat(e.target.value) || 0 })} className="input w-full" min="0" max="100" /></div>
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Meat Consumption</label>
+      <select value={input.meatConsumption} onChange={(e) => setInput({ ...input, meatConsumption: e.target.value as 'high' | 'medium' | 'low' | 'none' })} className="input w-full">
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+        <option value="none">None</option>
+      </select>
+    </div>
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Dairy Consumption</label>
+      <select value={input.dairyConsumption} onChange={(e) => setInput({ ...input, dairyConsumption: e.target.value as 'high' | 'medium' | 'low' | 'none' })} className="input w-full">
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+        <option value="none">None</option>
+      </select>
+    </div>
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Local Food Percentage (%)</label>
+      <input type="number" value={input.localFoodPercentage} onChange={(e) => setInput({ ...input, localFoodPercentage: parseFloat(e.target.value) || 0 })} className="input w-full" min="0" max="100" />
+    </div>
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Waste Percentage (%)</label>
+      <input type="number" value={input.wastePercentage} onChange={(e) => setInput({ ...input, wastePercentage: parseFloat(e.target.value) || 0 })} className="input w-full" min="0" max="100" />
+    </div>
   </div>
 );
 
