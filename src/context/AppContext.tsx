@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { mockCommunityData } from '../data/mockData';
 import { User, CarbonData, CommunityPost } from '../types';
-import { supabase } from '../lib/supabase'; // Adjust path based on your project structure
+import { supabase } from '../lib/supabase';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 
 interface AppContextType {
@@ -19,6 +19,7 @@ interface AppContextType {
   toggleLike: (postId: string) => void;
   logout: () => Promise<void>;
   loading: boolean;
+  updateUserPoints: (userId: string, points: number) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -107,7 +108,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         console.log('User set in context, isLoggedIn set to true:', appUser);
       } else {
         console.log('No profile found for user ID:', supabaseUser.id);
-        // Create minimal user if profile is missing
         const minimalUser: User = {
           id: supabaseUser.id,
           name: supabaseUser.email?.split('@')[0] || 'User',
@@ -191,22 +191,65 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     );
   };
 
+  const updateUserPoints = async (userId: string, points: number) => {
+    try {
+      const { data: currentUser, error: fetchError } = await supabase
+        .from('profiles')
+        .select('points')
+        .eq('id', userId)
+        .single();
+
+      if (fetchError) {
+        console.error('Error fetching current points:', fetchError);
+        return;
+      }
+
+      const newTotal = (currentUser.points || 0) + points;
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ points: newTotal })
+        .eq('id', userId);
+
+      if (updateError) {
+        console.error('Error updating points:', updateError);
+        return;
+      }
+
+      // Update local user state
+      setUser(prev => prev ? { ...prev, greenPoints: newTotal } : null);
+    } catch (error) {
+      console.error('Error in updateUserPoints:', error);
+    }
+  };
+
   const logout = async (): Promise<void> => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      
+      // Clear all state
       setUser(null);
       setIsLoggedIn(false);
       setCarbonData([]);
       setCommunityPosts(mockCommunityData);
       setTotalFootprint(0);
+      
+      // Clear any stored tokens
       localStorage.removeItem('supabase.auth.token');
+      sessionStorage.clear();
+      
       console.log('User logged out successfully');
     } catch (error) {
       console.error('Logout error:', error);
+      // Force logout even if there's an error
       setUser(null);
       setIsLoggedIn(false);
-      throw error;
+      setCarbonData([]);
+      setCommunityPosts(mockCommunityData);
+      setTotalFootprint(0);
+      localStorage.clear();
+      sessionStorage.clear();
     }
   };
 
@@ -227,6 +270,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         toggleLike,
         logout,
         loading,
+        updateUserPoints,
       }}
     >
       {children}

@@ -13,31 +13,31 @@ import {
   Calendar,
   Check,
   AlertCircle,
-  Key,
-  ShieldAlert,
-  Globe,
   Camera,
+  Save,
+  X,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase'; // Assuming supabase is configured
+import { supabase } from '../lib/supabase';
 
 type ProfileTab = 'overview' | 'badges' | 'settings';
 
 const ProfilePage: React.FC = () => {
-  const { user, setUser, logout, updateUserPoints } = useApp(); // Added updateUserPoints
+  const { user, setUser, logout } = useApp();
   const [activeTab, setActiveTab] = useState<ProfileTab>('overview');
   const [formState, setFormState] = useState({
     name: '',
     email: '',
     location: '',
     bio: '',
-    avatar_url: '',
   });
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
   const navigate = useNavigate();
 
-  // Sync form state with user data on mount
+  // Sync form state with user data on mount and user changes
   useEffect(() => {
     if (user) {
       setFormState({
@@ -45,16 +45,19 @@ const ProfilePage: React.FC = () => {
         email: user.email || '',
         location: user.location || '',
         bio: user.bio || '',
-        avatar_url: user.avatar_url || '',
       });
     }
   }, [user]);
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut(); // Explicitly sign out
-    if (error) console.error('Logout error:', error);
-    logout(); // Clear app context
-    navigate('/'); // Redirect to home or login
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Force navigation even if logout fails
+      navigate('/');
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -64,45 +67,58 @@ const ProfilePage: React.FC = () => {
   const handleSaveProfile = async () => {
     if (!user?.id) return;
 
-    const { data, error } = await supabase
-      .from('profiles')
-      .update({
-        name: formState.name,
-        email: formState.email,
-        location: formState.location,
-        bio: formState.bio,
-        avatar_url: formState.avatar_url,
-      })
-      .eq('id', user.id)
-      .select();
+    setIsSaving(true);
+    setSaveMessage('');
 
-    if (error) {
-      console.error('Profile update error:', error);
-      alert('Failed to save profile. Check console for details.');
-    } else {
-      setUser(data[0]); // Update user in context
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .update({
+          name: formState.name,
+          location: formState.location,
+        })
+        .eq('id', user.id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Profile update error:', error);
+        setSaveMessage('Failed to save profile. Please try again.');
+        return;
+      }
+
+      // Update user in context
+      setUser(prev => prev ? {
+        ...prev,
+        name: formState.name,
+        location: formState.location,
+      } : null);
+
       setIsEditing(false);
-      alert('Profile saved successfully!');
+      setSaveMessage('Profile saved successfully!');
+      
+      // Clear message after 3 seconds
+      setTimeout(() => setSaveMessage(''), 3000);
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      setSaveMessage('Failed to save profile. Please try again.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  const handleProfilePicUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!user?.id || !event.target.files) return;
-
-    const file = event.target.files[0];
-    const filePath = `${user.id}/profile.jpg`;
-    const { error: uploadError } = await supabase.storage
-      .from('profile-pics')
-      .upload(filePath, file, { upsert: true });
-
-    if (uploadError) {
-      console.error('Upload error:', uploadError);
-      alert('Failed to upload profile picture.');
-    } else {
-      const publicUrl = supabase.storage.from('profile-pics').getPublicUrl(filePath).data.publicUrl;
-      setFormState({ ...formState, avatar_url: filePath });
-      await handleSaveProfile(); // Save new avatar URL
+  const handleCancelEdit = () => {
+    // Reset form to original user data
+    if (user) {
+      setFormState({
+        name: user.name || '',
+        email: user.email || '',
+        location: user.location || '',
+        bio: user.bio || '',
+      });
     }
+    setIsEditing(false);
+    setSaveMessage('');
   };
 
   if (!user) {
@@ -111,7 +127,12 @@ const ProfilePage: React.FC = () => {
         <User className="w-16 h-16 text-gray-300 mx-auto mb-4" />
         <h2 className="text-2xl font-semibold mb-2">Not Logged In</h2>
         <p className="text-gray-600 mb-6">Please log in to view your profile.</p>
-        <button className="btn btn-primary" onClick={() => navigate('/login')}>Log In</button>
+        <button 
+          className="btn btn-primary" 
+          onClick={() => navigate('/login')}
+        >
+          Log In
+        </button>
       </div>
     );
   }
@@ -128,37 +149,55 @@ const ProfilePage: React.FC = () => {
         <p className="text-gray-600">Manage your account, view your achievements, and track your progress.</p>
       </motion.div>
 
+      {/* Save Message */}
+      {saveMessage && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`mb-6 p-4 rounded-lg flex items-center ${
+            saveMessage.includes('success') 
+              ? 'bg-green-50 text-green-800 border border-green-200' 
+              : 'bg-red-50 text-red-800 border border-red-200'
+          }`}
+        >
+          {saveMessage.includes('success') ? (
+            <Check className="w-5 h-5 mr-2" />
+          ) : (
+            <AlertCircle className="w-5 h-5 mr-2" />
+          )}
+          {saveMessage}
+        </motion.div>
+      )}
+
       {/* Profile Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-8">
+      <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
         <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
           <div className="relative">
             <img
-              src={formState.avatar_url ? supabase.storage.from('profile-pics').getPublicUrl(formState.avatar_url).data.publicUrl : '/default-avatar.png'}
-              alt={formState.name}
+              src={user.avatarUrl}
+              alt={user.name}
               className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white shadow-md"
-              onError={(e) => { e.currentTarget.src = '/default-avatar.png'; }}
             />
-            <label className="absolute bottom-0 right-0 bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:bg-primary/90 transition-colors cursor-pointer">
+            <div className="absolute bottom-0 right-0 bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md">
               <Camera size={16} />
-              <input type="file" className="hidden" onChange={handleProfilePicUpload} accept="image/*" />
-            </label>
+            </div>
           </div>
 
           <div className="flex-1 text-center md:text-left">
-            <h2 className="text-2xl font-bold dark:text-white">{formState.name}</h2>
+            <h2 className="text-2xl font-bold">{user.name}</h2>
 
-            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mt-2 text-gray-600 dark:text-gray-300">
+            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mt-2 text-gray-600">
               <div className="flex items-center justify-center md:justify-start">
                 <Mail size={16} className="mr-2" />
-                <span>{formState.email}</span>
+                <span>{user.email}</span>
               </div>
               <div className="flex items-center justify-center md:justify-start">
                 <MapPin size={16} className="mr-2" />
-                <span>{formState.location}</span>
+                <span>{user.location}</span>
               </div>
               <div className="flex items-center justify-center md:justify-start">
                 <Calendar size={16} className="mr-2" />
-                <span>Joined {user.joinDate || new Date().toLocaleDateString()}</span>
+                <span>Joined {user.joinDate}</span>
               </div>
             </div>
 
@@ -180,7 +219,7 @@ const ProfilePage: React.FC = () => {
       {/* Profile Tabs */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="lg:col-span-1">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
             <ProfileTabButton
               active={activeTab === 'overview'}
               onClick={() => setActiveTab('overview')}
@@ -202,10 +241,10 @@ const ProfilePage: React.FC = () => {
               label="Account Settings"
             />
 
-            <div className="p-4 border-t dark:border-gray-700">
+            <div className="p-4 border-t">
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center justify-between text-gray-700 dark:text-gray-300 hover:text-primary transition-colors py-2"
+                className="w-full flex items-center justify-between text-gray-700 hover:text-red-600 transition-colors py-2"
               >
                 <div className="flex items-center">
                   <LogOut size={18} className="mr-3" />
@@ -217,16 +256,17 @@ const ProfilePage: React.FC = () => {
         </div>
 
         <div className="lg:col-span-3">
-          {activeTab === 'overview' && <ProfileOverview user={formState} />}
+          {activeTab === 'overview' && <ProfileOverview user={user} />}
           {activeTab === 'badges' && <BadgesAchievements user={user} />}
           {activeTab === 'settings' && (
             <AccountSettings
               user={formState}
-              setUser={setUser}
               isEditing={isEditing}
+              isSaving={isSaving}
               setIsEditing={setIsEditing}
               handleChange={handleChange}
               handleSave={handleSaveProfile}
+              handleCancel={handleCancelEdit}
             />
           )}
         </div>
@@ -254,7 +294,7 @@ const ProfileTabButton: React.FC<ProfileTabButtonProps> = ({
       className={`w-full flex items-center justify-between px-4 py-3 transition-colors ${
         active
           ? 'bg-primary-light/10 text-primary border-l-4 border-primary'
-          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+          : 'text-gray-700 hover:bg-gray-50'
       }`}
     >
       <div className="flex items-center">
@@ -268,77 +308,107 @@ const ProfileTabButton: React.FC<ProfileTabButtonProps> = ({
 
 interface AccountSettingsProps {
   user: any;
-  setUser: (u: any) => void;
   isEditing: boolean;
+  isSaving: boolean;
   setIsEditing: (e: boolean) => void;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleSave: () => void;
+  handleCancel: () => void;
 }
 
 const AccountSettings: React.FC<AccountSettingsProps> = ({
   user,
-  setUser,
   isEditing,
+  isSaving,
   setIsEditing,
   handleChange,
   handleSave,
+  handleCancel,
 }) => {
   return (
-    <div className="space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+    <div className="space-y-6 bg-white rounded-xl shadow-sm p-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold mb-4 dark:text-white">Account Settings</h3>
+        <h3 className="text-lg font-semibold">Account Settings</h3>
         {!isEditing ? (
-          <button onClick={() => setIsEditing(true)} className="btn btn-outline">
-            <Edit size={16} className="mr-2" /> Edit
+          <button 
+            onClick={() => setIsEditing(true)} 
+            className="btn btn-outline flex items-center"
+          >
+            <Edit size={16} className="mr-2" /> Edit Profile
           </button>
         ) : (
-          <button onClick={handleSave} className="btn btn-primary">
-            <Check size={16} className="mr-2" /> Save
-          </button>
+          <div className="flex space-x-2">
+            <button 
+              onClick={handleCancel} 
+              className="btn btn-outline flex items-center"
+              disabled={isSaving}
+            >
+              <X size={16} className="mr-2" /> Cancel
+            </button>
+            <button 
+              onClick={handleSave} 
+              className="btn btn-primary flex items-center"
+              disabled={isSaving}
+            >
+              <Save size={16} className="mr-2" /> 
+              {isSaving ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
         )}
       </div>
-      <div>
-        <label className="block text-sm font-medium mb-1 dark:text-gray-300">Full Name</label>
-        <input
-          type="text"
-          name="name"
-          value={user.name}
-          onChange={handleChange}
-          disabled={!isEditing}
-          className="input w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium mb-1 dark:text-gray-300">Email</label>
-        <input
-          type="email"
-          name="email"
-          value={user.email}
-          onChange={handleChange}
-          disabled={!isEditing}
-          className="input w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium mb-1 dark:text-gray-300">Location</label>
-        <input
-          type="text"
-          name="location"
-          value={user.location}
-          onChange={handleChange}
-          disabled={!isEditing}
-          className="input w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium mb-1 dark:text-gray-300">Bio</label>
-        <textarea
-          name="bio"
-          value={user.bio || ''}
-          onChange={handleChange}
-          disabled={!isEditing}
-          className="input w-full h-24 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-        />
+      
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Full Name</label>
+          <input
+            type="text"
+            name="name"
+            value={user.name}
+            onChange={handleChange}
+            disabled={!isEditing}
+            className={`input w-full ${!isEditing ? 'bg-gray-50' : ''}`}
+            placeholder="Enter your full name"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-1">Email</label>
+          <input
+            type="email"
+            name="email"
+            value={user.email}
+            onChange={handleChange}
+            disabled={true} // Email should not be editable
+            className="input w-full bg-gray-50"
+            placeholder="Email cannot be changed"
+          />
+          <p className="text-xs text-gray-500 mt-1">Email address cannot be modified</p>
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-1">Location</label>
+          <input
+            type="text"
+            name="location"
+            value={user.location}
+            onChange={handleChange}
+            disabled={!isEditing}
+            className={`input w-full ${!isEditing ? 'bg-gray-50' : ''}`}
+            placeholder="Enter your location"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-1">Bio</label>
+          <textarea
+            name="bio"
+            value={user.bio || ''}
+            onChange={handleChange}
+            disabled={!isEditing}
+            className={`input w-full h-24 resize-none ${!isEditing ? 'bg-gray-50' : ''}`}
+            placeholder="Tell us about yourself..."
+          />
+        </div>
       </div>
     </div>
   );
@@ -346,17 +416,28 @@ const AccountSettings: React.FC<AccountSettingsProps> = ({
 
 const ProfileOverview = ({ user }: { user: any }) => {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-      <h3 className="text-lg font-semibold mb-4 dark:text-white">Profile Overview</h3>
-      <p className="text-gray-600 dark:text-gray-300">Your carbon tracking journey and achievements.</p>
-      <div className="mt-4 space-y-4">
-        <p><strong>Name:</strong> {user.name}</p>
-        <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>Location:</strong> {user.location}</p>
-        <p><strong>Bio:</strong> {user.bio || 'No bio yet.'}</p>
-        <p><strong>Green Points:</strong> {user.greenPoints || 0}</p>
-        <p><strong>Level:</strong> {user.level || 1}</p>
-        <p><strong>Streak:</strong> {user.streak || 0} days</p>
+    <div className="bg-white rounded-xl shadow-sm p-6">
+      <h3 className="text-lg font-semibold mb-4">Profile Overview</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h4 className="font-medium mb-3">Personal Information</h4>
+          <div className="space-y-2 text-sm">
+            <p><span className="font-medium">Name:</span> {user.name}</p>
+            <p><span className="font-medium">Email:</span> {user.email}</p>
+            <p><span className="font-medium">Location:</span> {user.location}</p>
+            <p><span className="font-medium">Member since:</span> {user.joinDate}</p>
+          </div>
+        </div>
+        
+        <div>
+          <h4 className="font-medium mb-3">Activity Stats</h4>
+          <div className="space-y-2 text-sm">
+            <p><span className="font-medium">Green Points:</span> {user.greenPoints || 0}</p>
+            <p><span className="font-medium">Level:</span> {user.level || 1}</p>
+            <p><span className="font-medium">Current Streak:</span> {user.streak || 0} days</p>
+            <p><span className="font-medium">Badges Earned:</span> {user.badges?.length || 0}</p>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -364,17 +445,27 @@ const ProfileOverview = ({ user }: { user: any }) => {
 
 const BadgesAchievements = ({ user }: { user: any }) => {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-      <h3 className="text-lg font-semibold mb-4 dark:text-white">Badges & Achievements</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {user.badges?.map((badge: any) => (
-          <div key={badge.id} className="border dark:border-gray-700 rounded-lg p-4">
-            <h4 className="font-medium dark:text-white">{badge.name}</h4>
-            <p className="text-sm text-gray-600 dark:text-gray-300">{badge.description}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Earned: {badge.earnedDate}</p>
-          </div>
-        )) || <p className="text-gray-600 dark:text-gray-300">No badges yet.</p>}
-      </div>
+    <div className="bg-white rounded-xl shadow-sm p-6">
+      <h3 className="text-lg font-semibold mb-4">Badges & Achievements</h3>
+      {user.badges && user.badges.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {user.badges.map((badge: any) => (
+            <div key={badge.id} className="border rounded-lg p-4">
+              <h4 className="font-medium">{badge.name}</h4>
+              <p className="text-sm text-gray-600">{badge.description}</p>
+              <p className="text-xs text-gray-500 mt-2">Earned: {badge.earnedDate}</p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-8">
+          <Award className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+          <h4 className="text-lg font-medium mb-2">No badges yet</h4>
+          <p className="text-gray-600">
+            Start tracking your carbon footprint and completing challenges to earn badges!
+          </p>
+        </div>
+      )}
     </div>
   );
 };

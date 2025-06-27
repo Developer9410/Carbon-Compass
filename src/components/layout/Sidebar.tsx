@@ -11,7 +11,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
   const location = useLocation();
-  const { user } = useApp();
+  const { user, isLoggedIn } = useApp();
   
   const sidebarVariants = {
     open: { x: 0, transition: { type: 'spring', stiffness: 300, damping: 30 } },
@@ -52,7 +52,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
             </button>
           </div>
           
-          {user && (
+          {/* User Profile Section - Only show when logged in */}
+          {isLoggedIn && user && (
             <div className="p-4 border-b">
               <div className="flex items-center space-x-3">
                 <img 
@@ -60,8 +61,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
                   alt={user.name} 
                   className="w-10 h-10 rounded-full object-cover"
                 />
-                <div>
-                  <h3 className="font-medium">{user.name}</h3>
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-medium truncate">{user.name}</h3>
                   <div className="flex items-center mt-1">
                     <span className="text-xs bg-primary-light/20 text-primary px-2 py-0.5 rounded-full">
                       Level {user.level}
@@ -79,14 +80,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
                 </div>
                 <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-primary rounded-full"
-                    style={{ width: `${(user.streak / 10) * 100}%` }}
+                    className="h-full bg-primary rounded-full transition-all duration-300"
+                    style={{ width: `${Math.min(100, (user.streak / 10) * 100)}%` }}
                   />
                 </div>
               </div>
             </div>
           )}
           
+          {/* Navigation Menu */}
           <nav className="p-4 flex-1">
             <ul className="space-y-1">
               <NavItem 
@@ -96,65 +98,99 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
                 active={location.pathname === '/'} 
                 onClick={closeSidebar}
               />
-              <NavItem 
-                to="/calculator" 
-                icon={<Calculator size={18} />} 
-                label="Calculator" 
-                active={location.pathname === '/calculator'} 
-                onClick={closeSidebar}
-              />
-              <NavItem 
-                to="/dashboard" 
-                icon={<BarChart2 size={18} />} 
-                label="Dashboard" 
-                active={location.pathname === '/dashboard'} 
-                onClick={closeSidebar}
-              />
-              <NavItem 
-                to="/offset" 
-                icon={<Leaf size={18} />} 
-                label="Offset" 
-                active={location.pathname === '/offset'} 
-                onClick={closeSidebar}
-              />
-              <NavItem 
-                to="/community" 
-                icon={<Users size={18} />} 
-                label="Community" 
-                active={location.pathname === '/community'} 
-                onClick={closeSidebar}
-              />
-              <NavItem 
-                to="/resources" 
-                icon={<BookOpen size={18} />} 
-                label="Resources" 
-                active={location.pathname === '/resources'} 
-                onClick={closeSidebar}
-              />
-              <NavItem 
-                to="/challenges" 
-                icon={<Award size={18} />} 
-                label="Challenges" 
-                active={location.pathname === '/challenges'} 
-                onClick={closeSidebar}
-              />
-              <NavItem 
-                to="/rewards" 
-                icon={<Gift size={18} />} 
-                label="Rewards" 
-                active={location.pathname === '/rewards'} 
-                onClick={closeSidebar}
-              />
               
-              <div className="border-t my-4"></div>
-              
-              <NavItem 
-                to="/profile" 
-                icon={<Settings size={18} />} 
-                label="Settings" 
-                active={location.pathname === '/profile'} 
-                onClick={closeSidebar}
-              />
+              {/* Show navigation items only when logged in */}
+              {isLoggedIn ? (
+                <>
+                  <NavItem 
+                    to="/calculator" 
+                    icon={<Calculator size={18} />} 
+                    label="Calculator" 
+                    active={location.pathname === '/calculator'} 
+                    onClick={closeSidebar}
+                  />
+                  <NavItem 
+                    to="/dashboard" 
+                    icon={<BarChart2 size={18} />} 
+                    label="Dashboard" 
+                    active={location.pathname === '/dashboard'} 
+                    onClick={closeSidebar}
+                  />
+                  <NavItem 
+                    to="/offset" 
+                    icon={<Leaf size={18} />} 
+                    label="Offset" 
+                    active={location.pathname === '/offset'} 
+                    onClick={closeSidebar}
+                  />
+                  <NavItem 
+                    to="/community" 
+                    icon={<Users size={18} />} 
+                    label="Community" 
+                    active={location.pathname === '/community'} 
+                    onClick={closeSidebar}
+                  />
+                  <NavItem 
+                    to="/challenges" 
+                    icon={<Award size={18} />} 
+                    label="Challenges" 
+                    active={location.pathname === '/challenges'} 
+                    onClick={closeSidebar}
+                  />
+                  <NavItem 
+                    to="/rewards" 
+                    icon={<Gift size={18} />} 
+                    label="Rewards" 
+                    active={location.pathname === '/rewards'} 
+                    onClick={closeSidebar}
+                  />
+                  
+                  <div className="border-t my-4"></div>
+                  
+                  <NavItem 
+                    to="/profile" 
+                    icon={<Settings size={18} />} 
+                    label="Settings" 
+                    active={location.pathname === '/profile'} 
+                    onClick={closeSidebar}
+                  />
+                </>
+              ) : (
+                <>
+                  {/* Show limited navigation for non-logged in users */}
+                  <NavItem 
+                    to="/resources" 
+                    icon={<BookOpen size={18} />} 
+                    label="Resources" 
+                    active={location.pathname === '/resources'} 
+                    onClick={closeSidebar}
+                  />
+                  <NavItem 
+                    to="/about" 
+                    icon={<Users size={18} />} 
+                    label="About" 
+                    active={location.pathname === '/about'} 
+                    onClick={closeSidebar}
+                  />
+                  
+                  <div className="border-t my-4"></div>
+                  
+                  <NavItem 
+                    to="/login" 
+                    icon={<Settings size={18} />} 
+                    label="Login" 
+                    active={location.pathname === '/login'} 
+                    onClick={closeSidebar}
+                  />
+                  <NavItem 
+                    to="/register" 
+                    icon={<Award size={18} />} 
+                    label="Register" 
+                    active={location.pathname === '/register'} 
+                    onClick={closeSidebar}
+                  />
+                </>
+              )}
             </ul>
           </nav>
           

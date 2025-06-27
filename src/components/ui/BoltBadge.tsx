@@ -1,13 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const BoltBadge: React.FC = () => {
+interface BoltBadgeProps {
+  className?: string;
+}
+
+const BoltBadge: React.FC<BoltBadgeProps> = ({ className = '' }) => {
   return (
     <motion.a
       href="https://bolt.new/"
       target="_blank"
       rel="noopener noreferrer"
-      className="group fixed top-4 right-4 z-50"
+      className={`group fixed top-4 right-4 z-50 ${className}`}
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3, delay: 0.5 }}

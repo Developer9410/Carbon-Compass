@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Info } from 'lucide-react'; // Keeping only necessary icons
+import { Info, ArrowRight, Save, PlusCircle } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import { TransportInput, EnergyInput, DietInput, CarbonData } from '../types';
 import { supabase } from '../lib/supabase';
 
 const CalculatorPage: React.FC = () => {
-  const { addCarbonData, user, updateUserPoints } = useApp(); // Added updateUserPoints
+  const { addCarbonData, user, updateUserPoints } = useApp();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'transport' | 'energy' | 'diet'>('transport');
   const [transportInput, setTransportInput] = useState<TransportInput>({
@@ -33,7 +33,7 @@ const CalculatorPage: React.FC = () => {
   const [calculationResult, setCalculationResult] = useState<any>(null);
   const [showResults, setShowResults] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
-  const [showImplementationMsg, setShowImplementationMsg] = useState(false); // For implementation button
+  const [showImplementationMsg, setShowImplementationMsg] = useState(false);
 
   const handleTabChange = (tab: 'transport' | 'energy' | 'diet') => {
     setActiveTab(tab);
@@ -108,7 +108,7 @@ const CalculatorPage: React.FC = () => {
           },
         };
         addCarbonData(carbonData);
-        // Attempt to update points immediately
+        
         if (user.id && result.data.pointsEarned) {
           await updateUserPoints(user.id, result.data.pointsEarned);
         }
@@ -156,11 +156,10 @@ const CalculatorPage: React.FC = () => {
 
   const handleImplementAction = () => {
     setShowImplementationMsg(true);
-    // Simulate points addition for implementation (adjust logic as needed)
     if (user.id) {
-      updateUserPoints(user.id, 85); // Example: 85 points for reducing red meat
+      updateUserPoints(user.id, 85);
     }
-    setTimeout(() => setShowImplementationMsg(false), 5000); // Hide after 5 seconds
+    setTimeout(() => setShowImplementationMsg(false), 5000);
   };
 
   return (
@@ -171,19 +170,18 @@ const CalculatorPage: React.FC = () => {
         transition={{ duration: 0.5 }}
         className="mb-8 text-center"
       >
-        <div className="bg-primary-light/10 rounded-xl p-6 inline-block">
-          <img src="/logo.png" alt="Logo" className="h-16" /> {/* Replace with your logo path */}
-        </div>
-        <p className="text-gray-600 mt-2">Track your carbon footprint and take action to reduce it!</p>
+        <h1 className="text-3xl font-bold mb-4">Carbon Footprint Calculator</h1>
+        <p className="text-gray-600">Track your carbon footprint and take action to reduce it!</p>
       </motion.div>
 
       {!showResults ? (
         <div className="bg-white rounded-xl shadow-sm p-6">
-          <div className="flex border-b mb-6">
+          {/* Tab Navigation */}
+          <div className="flex border-b mb-6 overflow-x-auto">
             <TabButton
               active={activeTab === 'transport'}
               onClick={() => handleTabChange('transport')}
-              icon={<Info size={18} />} // Simplified icon
+              icon={<Info size={18} />}
               label="Transport"
             />
             <TabButton
@@ -200,13 +198,15 @@ const CalculatorPage: React.FC = () => {
             />
           </div>
 
+          {/* Tab Content */}
           <div className="py-4">
             {activeTab === 'transport' && <TransportForm input={transportInput} setInput={setTransportInput} />}
             {activeTab === 'energy' && <EnergyForm input={energyInput} setInput={setEnergyInput} />}
             {activeTab === 'diet' && <DietForm input={dietInput} setInput={setDietInput} />}
           </div>
 
-          <div className="flex justify-between mt-8">
+          {/* Navigation Buttons */}
+          <div className="flex flex-col sm:flex-row justify-between mt-8 gap-4">
             <button
               onClick={() => {
                 if (activeTab === 'energy') handleTabChange('transport');
@@ -222,7 +222,7 @@ const CalculatorPage: React.FC = () => {
                   if (activeTab === 'transport') handleTabChange('energy');
                   else if (activeTab === 'energy') handleTabChange('diet');
                 }}
-                className="btn btn-primary"
+                className="btn btn-primary flex items-center justify-center"
               >
                 Next <ArrowRight size={16} className="ml-1" />
               </button>
@@ -242,22 +242,25 @@ const CalculatorPage: React.FC = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
-          className="bg-white rounded-xl shadow-sm p-8"
+          className="bg-white rounded-xl shadow-sm p-6 sm:p-8"
         >
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold mb-2">Your Carbon Footprint</h2>
             <p className="text-gray-600 mb-6">Based on the information you provided, here's your estimated carbon footprint:</p>
+            
             <div className="bg-gray-50 rounded-xl p-6 mb-8">
-              <p className="text-5xl font-bold text-primary mb-2">
-                {calculationResult?.totalEmissions} <span className="text-2xl">kg CO₂e</span>
+              <p className="text-4xl sm:text-5xl font-bold text-primary mb-2">
+                {calculationResult?.totalEmissions} <span className="text-xl sm:text-2xl">kg CO₂e</span>
               </p>
               <p className="text-gray-500">per month</p>
               <div className="flex justify-center items-center mt-4">
                 <Info size={18} className="text-gray-500 mr-2" />
-                <span className="text-gray-500">0% offset</span> {/* Fixed position */}
+                <span className="text-gray-500">0% offset</span>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            
+            {/* Breakdown Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
               <div className="bg-blue-50 rounded-lg p-4">
                 <Info className="w-6 h-6 text-blue-500 mb-2 mx-auto" />
                 <p className="font-medium">Transport</p>
@@ -275,25 +278,29 @@ const CalculatorPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Points Earned */}
             {calculationResult?.pointsEarned && (
               <div className="bg-primary-light/10 rounded-lg p-4 mb-6">
                 <p className="text-primary font-medium">🎉 You earned {calculationResult.pointsEarned} Green Points for tracking your footprint!</p>
               </div>
             )}
 
+            {/* Implementation Button */}
             <button
               onClick={handleImplementAction}
-              className="btn btn-primary mt-4"
+              className="btn btn-primary mt-4 mb-4"
             >
               Implement Action
             </button>
 
+            {/* Implementation Message */}
             {showImplementationMsg && (
               <div className="bg-green-100 text-green-800 p-4 rounded-lg mt-4 text-center">
                 Great choice! You've decided to implement: "Reduce red meat consumption". This could save you approximately 85 kg CO₂e per month. We'll track your progress and award you Green Points for taking action!
               </div>
             )}
 
+            {/* Info Box */}
             <div className="bg-primary-light/10 rounded-lg p-4 mb-6 flex items-start mt-4">
               <Info className="w-5 h-5 text-primary mt-0.5 mr-3 flex-shrink-0" />
               <p className="text-sm text-left">
@@ -303,17 +310,20 @@ const CalculatorPage: React.FC = () => {
               </p>
             </div>
           </div>
+          
+          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
-            <button onClick={handleSaveResults} className="btn btn-primary">
+            <button onClick={handleSaveResults} className="btn btn-primary flex items-center justify-center">
               <Save size={16} className="mr-2" /> Continue to Dashboard
             </button>
-            <button onClick={handleAddMore} className="btn btn-outline">
+            <button onClick={handleAddMore} className="btn btn-outline flex items-center justify-center">
               <PlusCircle size={16} className="mr-2" /> Calculate Again
             </button>
           </div>
         </motion.div>
       )}
 
+      {/* Info Section */}
       {!showResults && (
         <div className="mt-8 bg-primary-light/10 rounded-xl p-6">
           <h3 className="font-semibold mb-2 flex items-center">
@@ -333,10 +343,10 @@ const CalculatorPage: React.FC = () => {
   );
 };
 
-// TabButton component
+// Tab Button Component
 const TabButton: React.FC<{ active: boolean; onClick: () => void; icon: React.ReactNode; label: string }> = ({ active, onClick, icon, label }) => (
   <button
-    className={`flex items-center px-4 py-2 ${active ? 'border-b-2 border-primary text-primary' : 'text-gray-600'}`}
+    className={`flex items-center px-4 py-2 whitespace-nowrap ${active ? 'border-b-2 border-primary text-primary' : 'text-gray-600'}`}
     onClick={onClick}
   >
     {icon}
@@ -344,16 +354,16 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; icon: React.Re
   </button>
 );
 
-// TransportForm component
+// Form Components
 const TransportForm: React.FC<{ input: TransportInput; setInput: (input: TransportInput) => void }> = ({ input, setInput }) => {
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700">Transport Type</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Transport Type</label>
         <select
           value={input.type}
           onChange={(e) => setInput({ ...input, type: e.target.value })}
-          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          className="input w-full"
         >
           <option value="car">Car</option>
           <option value="bus">Bus</option>
@@ -364,21 +374,21 @@ const TransportForm: React.FC<{ input: TransportInput; setInput: (input: Transpo
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Distance (km)</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Distance (km)</label>
         <input
           type="number"
           value={input.distance}
           onChange={(e) => setInput({ ...input, distance: parseFloat(e.target.value) || 0 })}
-          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          className="input w-full"
           min="0"
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Frequency</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Frequency</label>
         <select
           value={input.frequency}
           onChange={(e) => setInput({ ...input, frequency: e.target.value })}
-          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          className="input w-full"
         >
           <option value="daily">Daily</option>
           <option value="weekly">Weekly</option>
@@ -389,11 +399,11 @@ const TransportForm: React.FC<{ input: TransportInput; setInput: (input: Transpo
       {input.type === 'car' && (
         <>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Fuel Type</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Fuel Type</label>
             <select
               value={input.fuelType || 'gasoline'}
               onChange={(e) => setInput({ ...input, fuelType: e.target.value })}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+              className="input w-full"
             >
               <option value="gasoline">Gasoline</option>
               <option value="diesel">Diesel</option>
@@ -402,12 +412,12 @@ const TransportForm: React.FC<{ input: TransportInput; setInput: (input: Transpo
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Number of Passengers</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Number of Passengers</label>
             <input
               type="number"
               value={input.passengers || 1}
               onChange={(e) => setInput({ ...input, passengers: parseInt(e.target.value) || 1 })}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+              className="input w-full"
               min="1"
             />
           </div>
@@ -417,16 +427,15 @@ const TransportForm: React.FC<{ input: TransportInput; setInput: (input: Transpo
   );
 };
 
-// EnergyForm component
 const EnergyForm: React.FC<{ input: EnergyInput; setInput: (input: EnergyInput) => void }> = ({ input, setInput }) => {
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700">Energy Type</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Energy Type</label>
         <select
           value={input.type}
           onChange={(e) => setInput({ ...input, type: e.target.value })}
-          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          className="input w-full"
         >
           <option value="electricity">Electricity</option>
           <option value="heating">Heating</option>
@@ -434,21 +443,21 @@ const EnergyForm: React.FC<{ input: EnergyInput; setInput: (input: EnergyInput) 
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Amount</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
         <input
           type="number"
           value={input.amount}
           onChange={(e) => setInput({ ...input, amount: parseFloat(e.target.value) || 0 })}
-          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          className="input w-full"
           min="0"
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Unit</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
         <select
           value={input.unit}
           onChange={(e) => setInput({ ...input, unit: e.target.value })}
-          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          className="input w-full"
         >
           <option value="kWh">kWh</option>
         </select>
@@ -465,11 +474,11 @@ const EnergyForm: React.FC<{ input: EnergyInput; setInput: (input: EnergyInput) 
         </label>
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Period</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Period</label>
         <select
           value={input.period}
           onChange={(e) => setInput({ ...input, period: e.target.value })}
-          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          className="input w-full"
         >
           <option value="daily">Daily</option>
           <option value="weekly">Weekly</option>
@@ -480,16 +489,15 @@ const EnergyForm: React.FC<{ input: EnergyInput; setInput: (input: EnergyInput) 
   );
 };
 
-// DietForm component
 const DietForm: React.FC<{ input: DietInput; setInput: (input: DietInput) => void }> = ({ input, setInput }) => {
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700">Meat Consumption</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Meat Consumption</label>
         <select
           value={input.meatConsumption}
           onChange={(e) => setInput({ ...input, meatConsumption: e.target.value })}
-          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          className="input w-full"
         >
           <option value="high">High</option>
           <option value="medium">Medium</option>
@@ -498,11 +506,11 @@ const DietForm: React.FC<{ input: DietInput; setInput: (input: DietInput) => voi
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Dairy Consumption</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Dairy Consumption</label>
         <select
           value={input.dairyConsumption}
           onChange={(e) => setInput({ ...input, dairyConsumption: e.target.value })}
-          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          className="input w-full"
         >
           <option value="high">High</option>
           <option value="medium">Medium</option>
@@ -511,23 +519,23 @@ const DietForm: React.FC<{ input: DietInput; setInput: (input: DietInput) => voi
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Local Food Percentage (%)</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Local Food Percentage (%)</label>
         <input
           type="number"
           value={input.localFoodPercentage}
           onChange={(e) => setInput({ ...input, localFoodPercentage: parseFloat(e.target.value) || 0 })}
-          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          className="input w-full"
           min="0"
           max="100"
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Waste Percentage (%)</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Waste Percentage (%)</label>
         <input
           type="number"
           value={input.wastePercentage}
           onChange={(e) => setInput({ ...input, wastePercentage: parseFloat(e.target.value) || 0 })}
-          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          className="input w-full"
           min="0"
           max="100"
         />

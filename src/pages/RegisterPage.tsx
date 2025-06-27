@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Eye, EyeOff, Compass, AlertCircle, CheckCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { useApp } from '../context/AppContext'; // Import useApp
 
 const RegisterPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -18,7 +17,6 @@ const RegisterPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { setIsLoggedIn } = useApp(); // Access setIsLoggedIn to control state
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -55,17 +53,28 @@ const RegisterPage: React.FC = () => {
       if (authError) throw authError;
 
       if (authData.user) {
+        // Create profile
         const { error: profileError } = await supabase
           .from('profiles')
           .insert([
-            { id: authData.user.id, name: formData.name, points: 0, location: 'San Francisco, CA' },
+            { 
+              id: authData.user.id, 
+              name: formData.name, 
+              points: 0, 
+              location: 'San Francisco, CA' 
+            },
           ]);
 
-        if (profileError) console.error('Profile creation error:', profileError.message);
+        if (profileError) {
+          console.error('Profile creation error:', profileError.message);
+        }
 
-        setSuccess('Account created successfully! Please check your email to verify.');
-        setIsLoggedIn(false); // Explicitly set to false to prevent dashboard access
-        setTimeout(() => navigate('/login'), 2000); // Redirect to login
+        setSuccess('Account created successfully! Redirecting to login...');
+        
+        // Redirect to login after 2 seconds
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
       }
     } catch (error: any) {
       console.error('Registration error:', error);
