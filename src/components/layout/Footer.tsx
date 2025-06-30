@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Compass, Github, Twitter, Instagram, Heart, Bolt } from 'lucide-react';
-import BoltBadge from '../ui/BoltBadge';
+import BoltBadge from '../ui/BoltBadge'; // Assuming BoltBadge is a small SVG or similar icon component
 
 const Footer: React.FC = () => {
   return (
@@ -77,8 +77,10 @@ const Footer: React.FC = () => {
               <p className="text-xs sm:text-sm text-gray-600 flex items-center">
                 Made with <Heart size={12} sm:size={14} className="mx-1 text-error" /> for a greener planet
               </p>
-              <div className="flex items-center space-x-1">
-                <BoltBadge className="h-5 w-5" />
+              {/* === Focus on this div === */}
+              <div className="flex items-center space-x-1 flex-shrink-0">
+                {/* Ensure BoltBadge itself has intrinsic sizing or is given explicit dimensions */}
+                <BoltBadge className="h-5 w-5 flex-shrink-0" />
                 <a href="https://bolt.new/" target="_blank" rel="noopener noreferrer" className="text-xs sm:text-sm text-primary font-bold hover:text-primary-dark">
                   Built on Bolt.new
                 </a>
