@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext';
 import { Info } from 'lucide-react';
 
 const CalculatorPage: React.FC = () => {
-  const { carbonData, totalFootprint, user } = useApp();
+  const { carbonData, totalFootprint, user, updateFootprint } = useApp(); // Added updateFootprint to update context
   const [transport, setTransport] = useState<number>(0);
   const [energy, setEnergy] = useState<number>(0);
   const [diet, setDiet] = useState<number>(0);
@@ -14,13 +14,18 @@ const CalculatorPage: React.FC = () => {
 
   // Calculate total offset amount from user's offset history
   const totalOffsetAmount = user?.offsetHistory?.reduce((sum, offset) => sum + offset.amount, 0) || 0;
-  const offsetPercentage = totalFootprint > 0 ? (totalOffsetAmount / totalFootprint) * 100 : 0;
+  // Use calculatedFootprint instead of totalFootprint for accuracy on this page
+  const offsetPercentage = calculatedFootprint > 0 ? (totalOffsetAmount / calculatedFootprint) * 100 : 0;
 
   // Handle form submission
   const handleCalculate = (e: React.FormEvent) => {
     e.preventDefault();
     const total = transport + energy + diet + other;
     setCalculatedFootprint(total);
+    // Update the context with the new footprint
+    if (updateFootprint) {
+      updateFootprint(total); // Assumes updateFootprint is a function in useApp to update totalFootprint
+    }
     setShowResults(true);
   };
 
