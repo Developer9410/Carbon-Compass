@@ -177,7 +177,6 @@ const CalculatorPage: React.FC = () => {
         className="mb-8 text-center"
       >
         <div className="bg-primary-light/10 rounded-xl p-6 inline-block">
-          <img src="/logo.png" alt="Logo" className="h-16" /> {/* Replace with your logo path */}
         </div>
         <p className="text-gray-600 mt-2">Track your carbon footprint and take action to reduce it!</p>
       </motion.div>
