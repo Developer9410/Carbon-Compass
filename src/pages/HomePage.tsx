@@ -43,7 +43,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="container mx-auto pb-12 relative">
-      {/* Hero Section */}
+      {/* Hero Section with BoltBadge */}
       <section className="relative overflow-hidden py-8 sm:py-12 md:py-16 lg:py-24 rounded-3xl bg-gradient-to-r from-green-50 to-blue-50">
         <div className="absolute inset-0 overflow-hidden">
           <svg className="absolute left-0 right-0 bottom-0 w-full text-green-100 opacity-30" 
@@ -59,6 +59,9 @@ const HomePage: React.FC = () => {
         </div>
         
         <div className="relative z-10 text-center px-4 sm:px-6 md:px-8 lg:px-12 max-w-4xl mx-auto">
+          {/* BoltBadge placed in top-right corner for clear visibility */}
+          <BoltBadge className="fixed top-4 right-4 md:block" />
+
           <motion.h1 
             className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4 sm:mb-6 text-gray-900"
             initial={{ opacity: 0, y: -20 }}
@@ -109,11 +112,6 @@ const HomePage: React.FC = () => {
               </>
             )}
           </motion.div>
-
-          {/* Bolt Badge Placement - Prominently displayed */}
-          <div className="mt-8 flex justify-center">
-            <BoltBadge />
-          </div>
         </div>
       </section>
       
