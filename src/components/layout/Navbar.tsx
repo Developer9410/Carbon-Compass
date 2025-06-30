@@ -37,11 +37,11 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
       await logout();
       setNotificationsOpen(false);
       setIsLoggedIn(false);
-      navigate('/HomePage');
+      navigate('/'); // Changed to root path '/' for consistency
     } catch (error) {
       console.error('Logout error:', error);
       setIsLoggedIn(false);
-      navigate('/HomePage');
+      navigate('/');
     }
   };
 
