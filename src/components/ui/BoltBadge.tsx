@@ -20,7 +20,7 @@ const BoltBadge: React.FC<BoltBadgeProps> = ({ className = '' }) => {
     >
       <div className="relative">
         <img
-          src={`${process.env.PUBLIC_URL}/black_circle_360x360.png`}
+          src={`${import.meta.env.BASE_URL}black_circle_360x360.png`}
           alt="Built with Bolt.new"
           className="w-12 h-12 md:w-14 md:h-14 hover:shadow-xl transition-shadow duration-300 rounded-full object-cover"
           onError={(e) => {
