@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Calculator, BarChart2, Leaf, Users, ArrowRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import BoltBadge from '../ui/BoltBadge';
 
 const HomePage: React.FC = () => {
   const { isLoggedIn } = useApp();
@@ -108,6 +109,11 @@ const HomePage: React.FC = () => {
               </>
             )}
           </motion.div>
+
+          {/* Bolt Badge Placement */}
+          <div className="mt-8 flex justify-center">
+            <BoltBadge className="block md:hidden" />
+          </div>
         </div>
       </section>
       
