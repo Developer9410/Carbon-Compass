@@ -110,9 +110,9 @@ const HomePage: React.FC = () => {
             )}
           </motion.div>
 
-          {/* Bolt Badge Placement */}
+          {/* Bolt Badge Placement - Prominently displayed */}
           <div className="mt-8 flex justify-center">
-            <BoltBadge className="block md:hidden" />
+            <BoltBadge />
           </div>
         </div>
       </section>
