@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Compass, Github, Twitter, Instagram, Heart, Bolt } from 'lucide-react';
-import BoltBadge from '../ui/BoltBadge';
+import BoltBadge from '../../ui/BoltBadge';
 
 const Footer: React.FC = () => {
   return (
