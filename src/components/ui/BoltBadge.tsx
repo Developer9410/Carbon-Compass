@@ -24,7 +24,7 @@ const BoltBadge: React.FC<BoltBadgeProps> = ({ className = '' }) => {
           alt="Built with Bolt.new"
           className="w-12 h-12 md:w-14 md:h-14 hover:shadow-xl transition-shadow duration-300 rounded-full object-cover"
           onError={(e) => {
-            (e.target as HTMLImageElement).src = 'https://via.placeholder.com/40'; // Fallback image
+            (e.target as HTMLImageElement).src = 'https://via.placeholder.com/40';
           }}
         />
         <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
