@@ -79,7 +79,7 @@ const Footer: React.FC = () => {
               </p>
               <div className="flex items-center flex-shrink-0"> {/* Removed space-x-1, it's not needed if only one item remains */}
                 <a href="https://bolt.new/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center"> {/* Use inline-flex to center content if needed */}
-                  <BoltBadge className="h-5 w-5 text-primary hover:text-primary-dark transition-colors duration-200" />
+                  <BoltBadge className="text-primary hover:text-primary-dark transition-colors duration-200" />
                 </a>
               </div>
             </div>
