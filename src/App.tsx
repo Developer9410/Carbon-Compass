@@ -24,39 +24,41 @@ import ResourceDetailPage from './pages/ResourceDetailPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import NotificationsPage from './pages/NotificationsPage';
-import PrivateRoute from './components/auth/PrivateRoute'; 
+import PrivateRoute from './components/auth/PrivateRoute';
+import { AppProvider } from './context/AppProvider'; // Import AppProvider
 
 function App() {
   return (
-    <AnimatePresence mode="wait">
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<HomePage />} />
-          <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<RegisterPage />} />
-          <Route path="calculator" element={<PrivateRoute><CalculatorPage /></PrivateRoute>} />
-          <Route path="dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
-          <Route path="profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
-          <Route path="rewards" element={<PrivateRoute><RewardsPage /></PrivateRoute> } />
-          <Route path="offset" element={<PrivateRoute><OffsetPage /></PrivateRoute> } />
-          <Route path="community" element={<PrivateRoute><CommunityPage /></PrivateRoute> } />
-          <Route path="challenges" element={<PrivateRoute><ChallengesPage /></PrivateRoute>} />
-          <Route path="notifications" element={<PrivateRoute><NotificationsPage /></PrivateRoute>} />
-          <Route path="resources" element={<ResourcesPage />} />
-          <Route path="resources/:id" element={<ResourceDetailPage />} />
-          <Route path="challenges" element={<ChallengesPage />} />
-          <Route path="blog" element={<BlogPage />} />
-          <Route path="climate-science" element={<ClimateSciencePage />} />
-          <Route path="offset-guide" element={<OffsetGuidePage />} />
-          <Route path="sustainability-tips" element={<SustainabilityTipsPage />} />
-          <Route path="api-docs" element={<ApiDocsPage />} />
-          <Route path="about" element={<AboutPage />} />
-          <Route path="contact" element={<ContactPage />} />
-          <Route path="privacy" element={<PrivacyPage />} />
-          <Route path="terms" element={<TermsPage />} />
-        </Route>
-      </Routes>
-    </AnimatePresence>
+    <AppProvider> {/* Wrap with AppProvider */}
+      <AnimatePresence mode="wait">
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<HomePage />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="register" element={<RegisterPage />} />
+            <Route path="calculator" element={<PrivateRoute><CalculatorPage /></PrivateRoute>} />
+            <Route path="dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
+            <Route path="profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+            <Route path="rewards" element={<PrivateRoute><RewardsPage /></PrivateRoute>} />
+            <Route path="offset" element={<PrivateRoute><OffsetPage /></PrivateRoute>} />
+            <Route path="community" element={<PrivateRoute><CommunityPage /></PrivateRoute>} />
+            <Route path="challenges" element={<PrivateRoute><ChallengesPage /></PrivateRoute>} />
+            <Route path="notifications" element={<PrivateRoute><NotificationsPage /></PrivateRoute>} />
+            <Route path="resources" element={<ResourcesPage />} />
+            <Route path="resources/:id" element={<ResourceDetailPage />} />
+            <Route path="blog" element={<BlogPage />} />
+            <Route path="climate-science" element={<ClimateSciencePage />} />
+            <Route path="offset-guide" element={<OffsetGuidePage />} />
+            <Route path="sustainability-tips" element={<SustainabilityTipsPage />} />
+            <Route path="api-docs" element={<ApiDocsPage />} />
+            <Route path="about" element={<AboutPage />} />
+            <Route path="contact" element={<ContactPage />} />
+            <Route path="privacy" element={<PrivacyPage />} />
+            <Route path="terms" element={<TermsPage />} />
+          </Route>
+        </Routes>
+      </AnimatePresence>
+    </AppProvider>
   );
 }
 
