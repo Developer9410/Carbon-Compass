@@ -52,11 +52,10 @@ const ProfilePage: React.FC = () => {
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/HomePage');
+      navigate('/');
     } catch (error) {
       console.error('Logout error:', error);
-      // Force navigation even if logout fails
-      navigate('/HomePage');
+      navigate('/');
     }
   };
 
