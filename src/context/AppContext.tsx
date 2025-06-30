@@ -20,6 +20,7 @@ interface AppContextType {
   logout: () => Promise<void>;
   loading: boolean;
   updateUserPoints: (userId: string, points: number) => Promise<void>;
+  updateFootprint: (newFootprint: number) => void; // Added updateFootprint
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -223,6 +224,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  const updateFootprint = (newFootprint: number) => {
+    setTotalFootprint(newFootprint); // Directly update totalFootprint
+  };
+
   const logout = async (): Promise<void> => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -271,6 +276,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         logout,
         loading,
         updateUserPoints,
+        updateFootprint, // Added to the provider value
       }}
     >
       {children}
