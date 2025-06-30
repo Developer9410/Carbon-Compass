@@ -20,12 +20,15 @@ const BoltBadge: React.FC<BoltBadgeProps> = ({ className = '' }) => {
     >
       <div className="relative">
         <img
-          src="/black_circle_360x360.png"
+          src={`${process.env.PUBLIC_URL}/black_circle_360x360.png`} // Use PUBLIC_URL for Netlify
           alt="Built with Bolt.new"
-          className="w-12 h-12 md:w-14 md:h-14 hover:shadow-xl transition-shadow duration-300 rounded-full"
+          className="w-12 h-12 md:w-14 md:h-14 hover:shadow-xl transition-shadow duration-300 rounded-full object-cover"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = 'https://via.placeholder.com/40'; // Fallback image
+          }}
         />
         <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-          <div className="bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+          <div className="bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap max-w-xs">
             Built with Bolt.new
             <div className="absolute top-full right-2 w-0 h-0 border-l-2 border-r-2 border-t-2 border-transparent border-t-black"></div>
           </div>
