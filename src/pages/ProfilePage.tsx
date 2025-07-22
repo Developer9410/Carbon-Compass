@@ -35,6 +35,7 @@ const ProfilePage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const navigate = useNavigate();
 
   // Sync form state with user data on mount and user changes
@@ -120,6 +121,29 @@ const ProfilePage: React.FC = () => {
     setSaveMessage('');
   };
 
+  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user?.id) return;
+
+    setIsUploadingPhoto(true);
+    try {
+      // In a real app, you would upload to Supabase Storage
+      // For now, we'll simulate the upload and use a placeholder
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate upload delay
+      
+      const newAvatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${Date.now()}`;
+      
+      setUser(prev => prev ? { ...prev, avatarUrl: newAvatarUrl } : null);
+      setSaveMessage('Profile photo updated successfully!');
+      setTimeout(() => setSaveMessage(''), 3000);
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      setSaveMessage('Failed to upload photo. Please try again.');
+    } finally {
+      setIsUploadingPhoto(false);
+    }
+  };
+
   if (!user) {
     return (
       <div className="container mx-auto max-w-4xl px-4 py-12 text-center">
@@ -177,9 +201,21 @@ const ProfilePage: React.FC = () => {
               alt={user.name}
               className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white shadow-md"
             />
-            <div className="absolute bottom-0 right-0 bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md">
+            <label className="absolute bottom-0 right-0 bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md cursor-pointer hover:bg-primary/90 transition-colors">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                className="hidden"
+                disabled={isUploadingPhoto}
+              />
               <Camera size={16} />
-            </div>
+              {isUploadingPhoto && (
+                <div className="absolute inset-0 bg-primary rounded-full flex items-center justify-center">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+            </label>
           </div>
 
           <div className="flex-1 text-center md:text-left">

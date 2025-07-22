@@ -161,9 +161,13 @@ const CalculatorPage: React.FC = () => {
 
   const handleImplementAction = () => {
     setShowImplementationMsg(true);
-    // Simulate points addition for implementation (adjust logic as needed)
-    if (user.id) {
-      updateUserPoints(user.id, 85); // Example: 85 points for reducing red meat
+    // Award points for implementing action
+    if (user?.id) {
+      updateUserPoints(user.id, 85).then(() => {
+        console.log('Points awarded successfully');
+      }).catch((error) => {
+        console.error('Error awarding points:', error);
+      });
     }
     setTimeout(() => setShowImplementationMsg(false), 5000); // Hide after 5 seconds
   };

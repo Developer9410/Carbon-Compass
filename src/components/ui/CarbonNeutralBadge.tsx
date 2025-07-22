@@ -36,7 +36,7 @@ const CarbonNeutralBadge: React.FC<CarbonNeutralBadgeProps> = ({
   if (isNeutral) {
     return (
       <motion.div 
-        className="flex items-center"
+        className="flex items-center flex-shrink-0"
         initial={{ scale: 0, rotate: -180 }}
         animate={{ scale: 1, rotate: 0 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
@@ -55,7 +55,7 @@ const CarbonNeutralBadge: React.FC<CarbonNeutralBadgeProps> = ({
   
   return (
     <motion.div 
-      className="flex items-center"
+      className="flex items-center flex-shrink-0"
       initial={{ scale: 0 }}
       animate={{ scale: 1 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}

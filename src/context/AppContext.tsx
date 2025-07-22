@@ -194,6 +194,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const updateUserPoints = async (userId: string, points: number) => {
     try {
+      console.log('Updating points for user:', userId, 'adding:', points);
       const { data: currentUser, error: fetchError } = await supabase
         .from('profiles')
         .select('points')
@@ -206,6 +207,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       }
 
       const newTotal = (currentUser.points || 0) + points;
+      console.log('New total points:', newTotal);
 
       const { error: updateError } = await supabase
         .from('profiles')
@@ -219,6 +221,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
       // Update local user state
       setUser(prev => prev ? { ...prev, greenPoints: newTotal } : null);
+      console.log('Points updated successfully in local state');
     } catch (error) {
       console.error('Error in updateUserPoints:', error);
     }

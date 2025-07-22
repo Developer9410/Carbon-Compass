@@ -43,9 +43,9 @@ const Layout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar toggleSidebar={toggleSidebar} />
-      <div className="flex flex-1">
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar isOpen={sidebarOpen} closeSidebar={() => setSidebarOpen(false)} />
-        <main className="flex-1 px-4 py-6 md:px-8 lg:px-12 relative overflow-auto w-full">
+        <main className="flex-1 px-4 py-6 md:px-8 lg:px-12 relative overflow-auto min-w-0">
           <motion.div
             key={location.pathname}
             initial="initial"

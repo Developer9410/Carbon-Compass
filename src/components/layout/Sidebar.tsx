@@ -39,7 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
       </AnimatePresence>
       
       <motion.aside
-        className="fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 md:static md:h-screen md:w-64"
+        className="fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 md:static md:h-screen md:w-64 md:flex-shrink-0"
         initial={isOpen ? "open" : "closed"}
         animate={isOpen ? "open" : "closed"}
         variants={sidebarVariants}

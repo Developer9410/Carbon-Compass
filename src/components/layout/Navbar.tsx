@@ -77,7 +77,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
           )}
           <div className="flex items-center space-x-3">
             {user && (
-              <div className="hidden sm:block">
+              <div className="hidden sm:flex items-center">
                 <CarbonNeutralBadge isNeutral={isNeutral} offsetPercentage={offsetPercentage} size="sm" showText={false} />
               </div>
             )}
