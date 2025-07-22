@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Bell, Check, X, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useApp } from '../context/AppContext';
+import { supabase } from '../lib/supabase';
 
 const NotificationsPage: React.FC = () => {
+  const { user } = useApp();
   const [notifications, setNotifications] = useState([
     {
       id: '1',
@@ -46,23 +49,60 @@ const NotificationsPage: React.FC = () => {
       type: 'offset'
     }
   ]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleMarkAllRead = () => {
-    setNotifications(prev => prev.map(notif => ({ ...notif, read: true })));
+  const handleMarkAllRead = async () => {
+    setIsLoading(true);
+    try {
+      // In a real app, this would call a backend API
+      // For now, we'll simulate the API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setNotifications(prev => prev.map(notif => ({ ...notif, read: true })));
+    } catch (error) {
+      console.error('Error marking all as read:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleClearAll = () => {
-    setNotifications([]);
+  const handleClearAll = async () => {
+    setIsLoading(true);
+    try {
+      // In a real app, this would call a backend API
+      // For now, we'll simulate the API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setNotifications([]);
+    } catch (error) {
+      console.error('Error clearing notifications:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleMarkAsRead = (id: string) => {
-    setNotifications(prev => prev.map(notif => 
-      notif.id === id ? { ...notif, read: true } : notif
-    ));
+  const handleMarkAsRead = async (id: string) => {
+    try {
+      // In a real app, this would call a backend API
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      setNotifications(prev => prev.map(notif => 
+        notif.id === id ? { ...notif, read: true } : notif
+      ));
+    } catch (error) {
+      console.error('Error marking as read:', error);
+    }
   };
 
-  const handleDeleteNotification = (id: string) => {
-    setNotifications(prev => prev.filter(notif => notif.id !== id));
+  const handleDeleteNotification = async (id: string) => {
+    try {
+      // In a real app, this would call a backend API
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      setNotifications(prev => prev.filter(notif => notif.id !== id));
+    } catch (error) {
+      console.error('Error deleting notification:', error);
+    }
   };
 
   const getNotificationIcon = (type: string) => {

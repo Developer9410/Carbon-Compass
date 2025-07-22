@@ -404,19 +404,6 @@ export const mockLeaderboard = [
 // Generate carbon offset projects
 export const mockOffsetProjects = [
   {
-    id: 'project1',
-    name: 'Amazon Rainforest Reforestation',
-    description: 'This project focuses on reforesting degraded areas of the Amazon rainforest, supporting biodiversity and creating carbon sinks.',
-    location: 'Brazil',
-    type: 'reforestation',
-    imageUrl: 'https://images.pexels.com/photos/5846983/pexels-photo-5846983.jpeg?auto=compress&cs=tinysrgb&w=500',
-    pricePerTon: 15,
-    rating: 4.8,
-    totalArea: '500 hectares',
-    treesPlanted: 250000,
-    carbonSequestered: 5000,
-  },
-  {
     id: 'project2',
     name: 'Wind Farm Development',
     description: 'Supporting the construction of wind turbines to replace fossil fuel electricity generation in rural communities.',
@@ -454,5 +441,18 @@ export const mockOffsetProjects = [
     coastlineProtected: '25 km',
     mangrovesPlanted: 100000,
     carbonSequestered: 3500,
+  },
+  {
+    id: 'project5',
+    name: 'Solar Energy Initiative',
+    description: 'Supporting solar panel installations in rural communities to provide clean energy and reduce dependence on fossil fuels.',
+    location: 'Arizona, USA',
+    type: 'renewable',
+    imageUrl: 'https://images.pexels.com/photos/9875441/pexels-photo-9875441.jpeg?auto=compress&cs=tinysrgb&w=500',
+    pricePerTon: 16,
+    rating: 4.7,
+    capacity: '75 MW',
+    homesServiced: 45000,
+    carbonDisplaced: 15000,
   },
 ];

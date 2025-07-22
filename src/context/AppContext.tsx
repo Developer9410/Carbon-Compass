@@ -222,6 +222,25 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       // Update local user state
       setUser(prev => prev ? { ...prev, greenPoints: newTotal } : null);
       console.log('Points updated successfully in local state');
+      
+      // Also update streak when points are awarded
+      const today = new Date().toDateString();
+      const lastActivity = localStorage.getItem(`lastActivity_${userId}`);
+      
+      if (lastActivity !== today) {
+        const currentStreak = user?.streak || 0;
+        const newStreak = currentStreak + 1;
+        
+        // Update streak in database
+        await supabase
+          .from('profiles')
+          .update({ streak: newStreak })
+          .eq('id', userId);
+        
+        // Update local state
+        setUser(prev => prev ? { ...prev, streak: newStreak } : null);
+        localStorage.setItem(`lastActivity_${userId}`, today);
+      }
     } catch (error) {
       console.error('Error in updateUserPoints:', error);
     }

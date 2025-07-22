@@ -15,6 +15,11 @@ const CarbonNeutralBadge: React.FC<CarbonNeutralBadgeProps> = ({
   size = 'md',
   showText = true 
 }) => {
+  // Don't render if offsetPercentage is 0 and not neutral
+  if (!isNeutral && offsetPercentage === 0) {
+    return null;
+  }
+
   const sizeClasses = {
     sm: 'w-6 h-6',
     md: 'w-8 h-8',

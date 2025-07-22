@@ -56,13 +56,17 @@ const DashboardPage: React.FC = () => {
 
   // Handle implement suggestion
   const handleImplementSuggestion = (suggestion: any) => {
-    alert(`Great choice! You've decided to implement: "${suggestion.title}". This could save you approximately ${suggestion.estimatedReduction} kg CO₂e per month. We'll track your progress and award you Green Points for taking action!`);
+    if (!user?.id) return;
     
-    // In a real app, you would:
-    // 1. Save the user's commitment to implement this suggestion
-    // 2. Set up tracking for this specific action
-    // 3. Award points when the user completes the action
-    // 4. Update the user's profile with this commitment
+    // Award points for implementing suggestion
+    const pointsToAward = Math.floor(suggestion.estimatedReduction * 2);
+    
+    updateUserPoints(user.id, pointsToAward).then(() => {
+      alert(`Great choice! You've decided to implement: "${suggestion.title}". This could save you approximately ${suggestion.estimatedReduction} kg CO₂e per month. You earned ${pointsToAward} Green Points for taking action!`);
+    }).catch((error) => {
+      console.error('Error awarding points:', error);
+      alert(`Great choice! You've decided to implement: "${suggestion.title}". This could save you approximately ${suggestion.estimatedReduction} kg CO₂e per month.`);
+    });
   };
 
   return (

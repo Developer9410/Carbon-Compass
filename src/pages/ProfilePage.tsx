@@ -127,13 +127,32 @@ const ProfilePage: React.FC = () => {
 
     setIsUploadingPhoto(true);
     try {
-      // In a real app, you would upload to Supabase Storage
-      // For now, we'll simulate the upload and use a placeholder
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate upload delay
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
       
-      const newAvatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${Date.now()}`;
+      const formData = new FormData();
+      formData.append('avatar', file);
       
-      setUser(prev => prev ? { ...prev, avatarUrl: newAvatarUrl } : null);
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const response = await fetch(`${supabaseUrl}/functions/v1/uploadAvatar`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: formData
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to upload avatar');
+      }
+      
+      const result = await response.json();
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Upload failed');
+      }
+      
+      setUser(prev => prev ? { ...prev, avatarUrl: result.avatarUrl } : null);
       setSaveMessage('Profile photo updated successfully!');
       setTimeout(() => setSaveMessage(''), 3000);
     } catch (error) {
