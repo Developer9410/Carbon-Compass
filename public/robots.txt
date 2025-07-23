@@ -4,16 +4,27 @@ Allow: /
 # Sitemap
 Sitemap: https://symphonious-flan-bc5994.netlify.app/sitemap.xml
 
+# Allow all search engines to crawl the site
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 1
+
 # Disallow admin or sensitive areas (if any)
 # Disallow: /admin/
 # Disallow: /api/
 
-# Allow all search engines to crawl the site
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-# Crawl delay (optional)
-Crawl-delay: 1
+# SEO optimizations
+User-agent: *
+Disallow: /404
+Disallow: /*.json$
+Disallow: /*?*
+Allow: /sitemap.xml
+Allow: /robots.txt
