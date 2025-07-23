@@ -390,6 +390,9 @@ export const generateChartData = () => {
   ];
   
   return { dailyData, weeklyData, monthlyData };
+};
+
+export const mockOffsetProjects = [
   {
     id: 'project2',
     name: 'Wind Farm Development',
