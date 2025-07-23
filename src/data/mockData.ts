@@ -485,3 +485,7 @@ export const mockLeaderboard = [
     carbonDisplaced: 15000,
   },
 ];
+
+// Mock leaderboard data
+export const mockLeaderboard = [
+];
