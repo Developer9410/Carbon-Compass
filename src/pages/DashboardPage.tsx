@@ -16,6 +16,7 @@ const DashboardPage: React.FC = () => {
   const { carbonData, totalFootprint, user } = useApp();
   const [chartTimeframe, setChartTimeframe] = useState<'daily' | 'weekly' | 'monthly'>('weekly');
   const [chartType, setChartType] = useState<'bar' | 'line' | 'pie'>('bar');
+  const [isImplementing, setIsImplementing] = useState<string | null>(null);
   const { dailyData, weeklyData, monthlyData } = generateChartData();
   
   // Mock offset data - in a real app this would come from the database
@@ -55,18 +56,24 @@ const DashboardPage: React.FC = () => {
   const COLORS = ['#3B82F6', '#F97316', '#10B981', '#A3A3A3'];
 
   // Handle implement suggestion
-  const handleImplementSuggestion = (suggestion: any) => {
+  const handleImplementSuggestion = async (suggestion: any) => {
     if (!user?.id) return;
+    
+    setIsImplementing(suggestion.id);
     
     // Award points for implementing suggestion
     const pointsToAward = Math.floor(suggestion.estimatedReduction * 2);
     
-    updateUserPoints(user.id, pointsToAward).then(() => {
+    try {
+      const { updateUserPoints } = useApp();
+      await updateUserPoints(user.id, pointsToAward);
       alert(`Great choice! You've decided to implement: "${suggestion.title}". This could save you approximately ${suggestion.estimatedReduction} kg CO₂e per month. You earned ${pointsToAward} Green Points for taking action!`);
-    }).catch((error) => {
+    } catch (error) {
       console.error('Error awarding points:', error);
       alert(`Great choice! You've decided to implement: "${suggestion.title}". This could save you approximately ${suggestion.estimatedReduction} kg CO₂e per month.`);
-    });
+    } finally {
+      setIsImplementing(null);
+    }
   };
 
   return (
@@ -360,9 +367,10 @@ const DashboardPage: React.FC = () => {
                     <span className="text-xs text-green-600 font-medium">+{Math.floor(suggestion.estimatedReduction * 2)} Green Points</span>
                     <button 
                       onClick={() => handleImplementSuggestion(suggestion)}
-                      className="btn btn-sm btn-outline hover:btn-primary transition-colors"
+                      disabled={isImplementing === suggestion.id}
+                      className={`btn btn-sm ${isImplementing === suggestion.id ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'btn-outline hover:btn-primary'} transition-colors`}
                     >
-                      Implement
+                      {isImplementing === suggestion.id ? 'Implementing...' : 'Implement'}
                     </button>
                   </div>
                 </div>

@@ -54,10 +54,7 @@ const NotificationsPage: React.FC = () => {
   const handleMarkAllRead = async () => {
     setIsLoading(true);
     try {
-      // In a real app, this would call a backend API
-      // For now, we'll simulate the API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      // For now, just update local state since we're using mock data
       setNotifications(prev => prev.map(notif => ({ ...notif, read: true })));
     } catch (error) {
       console.error('Error marking all as read:', error);
@@ -69,10 +66,7 @@ const NotificationsPage: React.FC = () => {
   const handleClearAll = async () => {
     setIsLoading(true);
     try {
-      // In a real app, this would call a backend API
-      // For now, we'll simulate the API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      // For now, just update local state since we're using mock data
       setNotifications([]);
     } catch (error) {
       console.error('Error clearing notifications:', error);
@@ -83,9 +77,7 @@ const NotificationsPage: React.FC = () => {
 
   const handleMarkAsRead = async (id: string) => {
     try {
-      // In a real app, this would call a backend API
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
+      // For now, just update local state since we're using mock data
       setNotifications(prev => prev.map(notif => 
         notif.id === id ? { ...notif, read: true } : notif
       ));
@@ -96,9 +88,7 @@ const NotificationsPage: React.FC = () => {
 
   const handleDeleteNotification = async (id: string) => {
     try {
-      // In a real app, this would call a backend API
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
+      // For now, just update local state since we're using mock data
       setNotifications(prev => prev.filter(notif => notif.id !== id));
     } catch (error) {
       console.error('Error deleting notification:', error);

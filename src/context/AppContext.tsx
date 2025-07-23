@@ -194,20 +194,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const updateUserPoints = async (userId: string, points: number) => {
     try {
-      console.log('Updating points for user:', userId, 'adding:', points);
-      const { data: currentUser, error: fetchError } = await supabase
+      const { data: currentProfile, error: fetchError } = await supabase
         .from('profiles')
         .select('points')
         .eq('id', userId)
         .single();
 
       if (fetchError) {
-        console.error('Error fetching current points:', fetchError);
-        return;
+        throw fetchError;
       }
 
-      const newTotal = (currentUser.points || 0) + points;
-      console.log('New total points:', newTotal);
+      const newTotal = (currentProfile.points || 0) + points;
 
       const { error: updateError } = await supabase
         .from('profiles')
@@ -215,15 +212,26 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         .eq('id', userId);
 
       if (updateError) {
-        console.error('Error updating points:', updateError);
-        return;
+        throw updateError;
+      }
+
+      const { error: transactionError } = await supabase
+        .from('point_transactions')
+        .insert({
+          user_id: userId,
+          points: points,
+          action_type: 'suggestion_implementation',
+          description: 'Implemented AI suggestion'
+        });
+
+      if (transactionError) {
+        console.warn('Transaction creation failed:', transactionError);
       }
 
       // Update local user state
       setUser(prev => prev ? { ...prev, greenPoints: newTotal } : null);
-      console.log('Points updated successfully in local state');
       
-      // Also update streak when points are awarded
+      // Update streak
       const today = new Date().toDateString();
       const lastActivity = localStorage.getItem(`lastActivity_${userId}`);
       
@@ -231,18 +239,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         const currentStreak = user?.streak || 0;
         const newStreak = currentStreak + 1;
         
-        // Update streak in database
-        await supabase
+        const { error: streakError } = await supabase
           .from('profiles')
           .update({ streak: newStreak })
           .eq('id', userId);
         
-        // Update local state
-        setUser(prev => prev ? { ...prev, streak: newStreak } : null);
-        localStorage.setItem(`lastActivity_${userId}`, today);
+        if (!streakError) {
+          setUser(prev => prev ? { ...prev, streak: newStreak } : null);
+          localStorage.setItem(`lastActivity_${userId}`, today);
+        }
       }
     } catch (error) {
       console.error('Error in updateUserPoints:', error);
+      throw error;
     }
   };
 

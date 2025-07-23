@@ -15,8 +15,8 @@ const CarbonNeutralBadge: React.FC<CarbonNeutralBadgeProps> = ({
   size = 'md',
   showText = true 
 }) => {
-  // Don't render if offsetPercentage is 0 and not neutral
-  if (!isNeutral && offsetPercentage === 0) {
+  // Don't render anything if there's no meaningful offset data
+  if (!isNeutral && offsetPercentage <= 0) {
     return null;
   }
 
@@ -50,7 +50,7 @@ const CarbonNeutralBadge: React.FC<CarbonNeutralBadgeProps> = ({
           <Award size={iconSizes[size]} className="text-white" />
         </div>
         {showText && (
-          <span className={`ml-2 font-semibold text-green-700 ${textSizes[size]}`}>
+          <span className={`ml-2 font-semibold text-green-700 ${textSizes[size]} whitespace-nowrap`}>
             Carbon Neutral
           </span>
         )}
@@ -95,7 +95,7 @@ const CarbonNeutralBadge: React.FC<CarbonNeutralBadgeProps> = ({
       </div>
       
       {showText && (
-        <span className={`ml-2 font-medium text-gray-700 ${textSizes[size]}`}>
+        <span className={`ml-2 font-medium text-gray-700 ${textSizes[size]} whitespace-nowrap`}>
           {offsetPercentage.toFixed(0)}% Offset
         </span>
       )}

@@ -125,7 +125,19 @@ const ProfilePage: React.FC = () => {
     const file = event.target.files?.[0];
     if (!file || !user?.id) return;
 
+    // Validate file type and size
+    if (!file.type.startsWith('image/')) {
+      setSaveMessage('Please select a valid image file.');
+      return;
+    }
+    
+    if (file.size > 5 * 1024 * 1024) {
+      setSaveMessage('File size must be less than 5MB.');
+      return;
+    }
     setIsUploadingPhoto(true);
+    setSaveMessage('');
+    
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
@@ -139,11 +151,12 @@ const ProfilePage: React.FC = () => {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
         },
-        body: formData
+        body: formData,
       });
       
       if (!response.ok) {
-        throw new Error('Failed to upload avatar');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Upload failed');
       }
       
       const result = await response.json();
@@ -152,12 +165,16 @@ const ProfilePage: React.FC = () => {
         throw new Error(result.error || 'Upload failed');
       }
       
-      setUser(prev => prev ? { ...prev, avatarUrl: result.avatarUrl } : null);
+      const newAvatarUrl = result.avatarUrl;
+      
+      // Update local user state
+      setUser(prev => prev ? { ...prev, avatarUrl: newAvatarUrl } : null);
+      
       setSaveMessage('Profile photo updated successfully!');
       setTimeout(() => setSaveMessage(''), 3000);
     } catch (error) {
       console.error('Error uploading photo:', error);
-      setSaveMessage('Failed to upload photo. Please try again.');
+      setSaveMessage(`Failed to upload photo: ${error.message}`);
     } finally {
       setIsUploadingPhoto(false);
     }

@@ -63,20 +63,6 @@ export const mockUserData: User = {
   ],
   offsetHistory: [
     {
-      id: 'offset1',
-      date: format(subDays(new Date(), 15), 'yyyy-MM-dd'),
-      amount: 50,
-      cost: 25,
-      project: {
-        id: 'project1',
-        name: 'Amazon Rainforest Reforestation',
-        description: 'Planting trees in deforested areas of the Amazon rainforest',
-        location: 'Brazil',
-        type: 'reforestation',
-        imageUrl: 'https://images.pexels.com/photos/5846983/pexels-photo-5846983.jpeg?auto=compress&cs=tinysrgb&w=500',
-      },
-    },
-    {
       id: 'offset2',
       date: format(subMonths(new Date(), 1), 'yyyy-MM-dd'),
       amount: 100,
@@ -88,6 +74,20 @@ export const mockUserData: User = {
         location: 'Iowa, USA',
         type: 'renewable',
         imageUrl: 'https://images.pexels.com/photos/1277882/pexels-photo-1277882.jpeg?auto=compress&cs=tinysrgb&w=500',
+      },
+    },
+    {
+      id: 'offset3',
+      date: format(subDays(new Date(), 15), 'yyyy-MM-dd'),
+      amount: 50,
+      cost: 25,
+      project: {
+        id: 'project3',
+        name: 'Solar Energy Initiative',
+        description: 'Supporting solar panel installations in rural communities',
+        location: 'Arizona, USA',
+        type: 'renewable',
+        imageUrl: 'https://images.pexels.com/photos/9875441/pexels-photo-9875441.jpeg?auto=compress&cs=tinysrgb&w=500',
       },
     },
   ],
@@ -390,19 +390,6 @@ export const generateChartData = () => {
   ];
   
   return { dailyData, weeklyData, monthlyData };
-};
-
-// Generate leaderboard data
-export const mockLeaderboard = [
-  { id: 'user5', name: 'Jordan Lee', avatarUrl: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=150', points: 3240, reductionPercent: 32 },
-  { id: 'user6', name: 'Riley Johnson', avatarUrl: 'https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=150', points: 2850, reductionPercent: 28 },
-  { id: 'user1', name: 'Alex Green', avatarUrl: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150', points: 1250, reductionPercent: 15 },
-  { id: 'user7', name: 'Casey Wilson', avatarUrl: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150', points: 1100, reductionPercent: 11 },
-  { id: 'user3', name: 'Morgan Chen', avatarUrl: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150', points: 980, reductionPercent: 9 },
-];
-
-// Generate carbon offset projects
-export const mockOffsetProjects = [
   {
     id: 'project2',
     name: 'Wind Farm Development',
