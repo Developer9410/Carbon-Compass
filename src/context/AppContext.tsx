@@ -194,6 +194,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const updateUserPoints = async (userId: string, points: number) => {
     try {
+      console.log('Updating points for user:', userId, 'Points to add:', points);
+      
       const { data: currentProfile, error: fetchError } = await supabase
         .from('profiles')
         .select('points')
@@ -201,10 +203,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         .single();
 
       if (fetchError) {
+        console.error('Error fetching current profile:', fetchError);
         throw fetchError;
       }
 
       const newTotal = (currentProfile.points || 0) + points;
+      console.log('Current points:', currentProfile.points, 'New total:', newTotal);
 
       const { error: updateError } = await supabase
         .from('profiles')
@@ -212,6 +216,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         .eq('id', userId);
 
       if (updateError) {
+        console.error('Error updating points:', updateError);
         throw updateError;
       }
 
@@ -229,6 +234,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       }
 
       // Update local user state
+      console.log('Updating local user state with new points:', newTotal);
       setUser(prev => prev ? { ...prev, greenPoints: newTotal } : null);
       
       // Update streak
@@ -238,6 +244,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       if (lastActivity !== today) {
         const currentStreak = user?.streak || 0;
         const newStreak = currentStreak + 1;
+        console.log('Updating streak from', currentStreak, 'to', newStreak);
         
         const { error: streakError } = await supabase
           .from('profiles')
@@ -247,8 +254,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         if (!streakError) {
           setUser(prev => prev ? { ...prev, streak: newStreak } : null);
           localStorage.setItem(`lastActivity_${userId}`, today);
+          console.log('Streak updated successfully');
+          console.error('Error updating streak:', streakError);
         }
       }
+      
+      console.log('Points update completed successfully');
     } catch (error) {
       console.error('Error in updateUserPoints:', error);
       throw error;

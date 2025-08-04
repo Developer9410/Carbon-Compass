@@ -163,8 +163,22 @@ const CalculatorPage: React.FC = () => {
     setShowImplementationMsg(true);
     // Award points for implementing action
     if (user?.id) {
-      updateUserPoints(user.id, 85).then(() => {
-        console.log('Points awarded successfully');
+      updateUserPoints(user.id, 85).then(async () => {
+        console.log('Points awarded successfully for implementing action');
+        // Force a re-render by updating the user context
+        const { data: updatedProfile } = await supabase
+          .from('profiles')
+          .select('points, streak')
+          .eq('id', user.id)
+          .single();
+        
+        if (updatedProfile) {
+          setUser(prev => prev ? {
+            ...prev,
+            greenPoints: updatedProfile.points,
+            streak: updatedProfile.streak
+          } : null);
+        }
       }).catch((error) => {
         console.error('Error awarding points:', error);
       });

@@ -94,11 +94,13 @@ const DashboardPage: React.FC = () => {
           
           {/* Carbon Neutral Status */}
           <div className="mt-4 md:mt-0">
-            <CarbonNeutralBadge 
-              isNeutral={isNeutral}
-              offsetPercentage={offsetPercentage}
-              size="lg"
-            />
+            {(isNeutral || offsetPercentage >= 5) && (
+              <CarbonNeutralBadge 
+                isNeutral={isNeutral}
+                offsetPercentage={offsetPercentage}
+                size="lg"
+              />
+            )}
           </div>
         </div>
       </motion.div>
