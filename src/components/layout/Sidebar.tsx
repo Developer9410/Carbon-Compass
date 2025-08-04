@@ -23,6 +23,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
     closed: { opacity: 0, transition: { duration: 0.3 } },
   };
 
+  const handleNavClick = () => {
+    // Only close sidebar on mobile
+    if (window.innerWidth < 768) {
+      closeSidebar();
+    }
+  };
   return (
     <>
       <AnimatePresence>
@@ -39,7 +45,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
       </AnimatePresence>
       
       <motion.aside
-        className="fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 md:static md:h-screen md:w-64 md:flex-shrink-0"
+        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 md:static md:h-screen md:w-64 md:flex-shrink-0 ${
+          isOpen ? 'md:block' : 'md:hidden'
+        }`}
         initial={isOpen ? "open" : "closed"}
         animate={isOpen ? "open" : "closed"}
         variants={sidebarVariants}
@@ -96,7 +104,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
                 icon={<Home size={18} />} 
                 label="Home" 
                 active={location.pathname === '/'} 
-                onClick={closeSidebar}
+                onClick={handleNavClick}
               />
               
               {/* Show navigation items only when logged in */}
@@ -107,42 +115,42 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
                     icon={<Calculator size={18} />} 
                     label="Calculator" 
                     active={location.pathname === '/calculator'} 
-                    onClick={closeSidebar}
+                    onClick={handleNavClick}
                   />
                   <NavItem 
                     to="/dashboard" 
                     icon={<BarChart2 size={18} />} 
                     label="Dashboard" 
                     active={location.pathname === '/dashboard'} 
-                    onClick={closeSidebar}
+                    onClick={handleNavClick}
                   />
                   <NavItem 
                     to="/offset" 
                     icon={<Leaf size={18} />} 
                     label="Offset" 
                     active={location.pathname === '/offset'} 
-                    onClick={closeSidebar}
+                    onClick={handleNavClick}
                   />
                   <NavItem 
                     to="/community" 
                     icon={<Users size={18} />} 
                     label="Community" 
                     active={location.pathname === '/community'} 
-                    onClick={closeSidebar}
+                    onClick={handleNavClick}
                   />
                   <NavItem 
                     to="/challenges" 
                     icon={<Award size={18} />} 
                     label="Challenges" 
                     active={location.pathname === '/challenges'} 
-                    onClick={closeSidebar}
+                    onClick={handleNavClick}
                   />
                   <NavItem 
                     to="/rewards" 
                     icon={<Gift size={18} />} 
                     label="Rewards" 
                     active={location.pathname === '/rewards'} 
-                    onClick={closeSidebar}
+                    onClick={handleNavClick}
                   />
                   
                   <div className="border-t my-4"></div>
@@ -152,7 +160,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
                     icon={<Settings size={18} />} 
                     label="Settings" 
                     active={location.pathname === '/profile'} 
-                    onClick={closeSidebar}
+                    onClick={handleNavClick}
                   />
                 </>
               ) : (
@@ -163,14 +171,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
                     icon={<BookOpen size={18} />} 
                     label="Resources" 
                     active={location.pathname === '/resources'} 
-                    onClick={closeSidebar}
+                    onClick={handleNavClick}
                   />
                   <NavItem 
                     to="/about" 
                     icon={<Users size={18} />} 
                     label="About" 
                     active={location.pathname === '/about'} 
-                    onClick={closeSidebar}
+                    onClick={handleNavClick}
                   />
                   
                   <div className="border-t my-4"></div>
@@ -180,14 +188,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
                     icon={<Settings size={18} />} 
                     label="Login" 
                     active={location.pathname === '/login'} 
-                    onClick={closeSidebar}
+                    onClick={handleNavClick}
                   />
                   <NavItem 
                     to="/register" 
                     icon={<Award size={18} />} 
                     label="Register" 
                     active={location.pathname === '/register'} 
-                    onClick={closeSidebar}
+                    onClick={handleNavClick}
                   />
                 </>
               )}

@@ -12,13 +12,28 @@ const Layout: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const handleResize = () => setSidebarOpen(window.innerWidth >= 768);
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setSidebarOpen(true);
+      } else {
+        setSidebarOpen(false);
+      }
+    };
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  const closeSidebar = () => {
+    // Only close sidebar on mobile
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
+  };
 
   const pageVariants = {
     initial: { opacity: 0, y: 20 },
@@ -44,8 +59,10 @@ const Layout: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar toggleSidebar={toggleSidebar} />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar isOpen={sidebarOpen} closeSidebar={() => setSidebarOpen(false)} />
-        <main className="flex-1 px-4 py-6 md:px-8 lg:px-12 relative overflow-auto min-w-0">
+        <Sidebar isOpen={sidebarOpen} closeSidebar={closeSidebar} />
+        <main className={`flex-1 px-4 py-6 md:px-8 lg:px-12 relative overflow-auto min-w-0 transition-all duration-300 ${
+          sidebarOpen && window.innerWidth >= 768 ? 'md:ml-0' : ''
+        }`}>
           <motion.div
             key={location.pathname}
             initial="initial"

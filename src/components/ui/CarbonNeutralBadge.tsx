@@ -15,8 +15,8 @@ const CarbonNeutralBadge: React.FC<CarbonNeutralBadgeProps> = ({
   size = 'md',
   showText = true 
 }) => {
-  // Don't render anything if there's no meaningful offset data
-  if (!isNeutral && offsetPercentage <= 0) {
+  // Only render if user is carbon neutral OR has meaningful offset (>5%)
+  if (!isNeutral && offsetPercentage < 5) {
     return null;
   }
 
