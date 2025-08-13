@@ -392,6 +392,45 @@ export const generateChartData = () => {
   return { dailyData, weeklyData, monthlyData };
 };
 
+// Mock leaderboard data
+export const mockLeaderboard = [
+  {
+    id: 'leader1',
+    name: 'Sarah Johnson',
+    avatarUrl: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150',
+    reductionPercent: 45,
+    points: 2850,
+  },
+  {
+    id: 'leader2',
+    name: 'Mike Chen',
+    avatarUrl: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150',
+    reductionPercent: 38,
+    points: 2340,
+  },
+  {
+    id: 'leader3',
+    name: 'Emma Davis',
+    avatarUrl: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150',
+    reductionPercent: 35,
+    points: 2100,
+  },
+  {
+    id: 'leader4',
+    name: 'Alex Green',
+    avatarUrl: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150',
+    reductionPercent: 32,
+    points: 1850,
+  },
+  {
+    id: 'leader5',
+    name: 'Jordan Taylor',
+    avatarUrl: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150',
+    reductionPercent: 28,
+    points: 1650,
+  },
+];
+
 export const mockOffsetProjects = [
   {
     id: 'project2',
