@@ -34,13 +34,14 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
 
   const handleLogout = async () => {
     try {
+      console.log('Navbar logout initiated');
       await logout();
       setNotificationsOpen(false);
-      setIsLoggedIn(false);
+      console.log('Logout completed, navigating to home');
       navigate('/');
     } catch (error) {
       console.error('Logout error:', error);
-      setIsLoggedIn(false);
+      // Force navigation even on error
       navigate('/');
     }
   };

@@ -272,6 +272,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const logout = async (): Promise<void> => {
     try {
+      console.log('Starting logout process...');
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
@@ -284,6 +285,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       
       // Clear any stored tokens
       localStorage.removeItem('supabase.auth.token');
+      localStorage.clear();
       sessionStorage.clear();
       
       console.log('User logged out successfully');
@@ -297,6 +299,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       setTotalFootprint(0);
       localStorage.clear();
       sessionStorage.clear();
+      console.log('Forced logout completed');
     }
   };
 
