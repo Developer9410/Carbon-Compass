@@ -32,6 +32,13 @@ const RegisterPage: React.FC = () => {
     setError(null);
     setSuccess(null);
 
+    // Check if Supabase is configured
+    if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+      setError('This is a demo version. Supabase database is not configured for the deployed site.');
+      setIsLoading(false);
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       setIsLoading(false);

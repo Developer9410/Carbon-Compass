@@ -50,6 +50,12 @@ const CalculatorPage: React.FC = () => {
       return;
     }
 
+    // Check if Supabase is configured
+    if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+      alert('This is a demo version. Database functionality is not available on the deployed site.');
+      return;
+    }
+
     setIsCalculating(true);
 
     try {
