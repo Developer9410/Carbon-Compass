@@ -50,12 +50,6 @@ const CalculatorPage: React.FC = () => {
       return;
     }
 
-    // Check if Supabase is configured
-    if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-      alert('This is a demo version. Database functionality is not available on the deployed site.');
-      return;
-    }
-
     setIsCalculating(true);
 
     try {
@@ -73,7 +67,6 @@ const CalculatorPage: React.FC = () => {
       if (!session) throw new Error("User not authenticated");
 
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      if (!supabaseUrl) throw new Error("Supabase URL not configured in .env");
 
       const response = await fetch(`${supabaseUrl}/functions/v1/estimateCarbon`, {
         method: 'POST',

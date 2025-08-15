@@ -36,15 +36,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   useEffect(() => {
     const checkSession = async () => {
       try {
-        // Check if Supabase is properly configured
-        if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-          console.warn('Supabase not configured - running in demo mode');
-          setUser(null);
-          setIsLoggedIn(false);
-          setLoading(false);
-          return;
-        }
-
         const { data: { session } } = await supabase.auth.getSession();
         console.log('Initial session check:', session ? 'Session found' : 'No session');
         if (session?.user) {

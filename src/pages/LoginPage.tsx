@@ -30,13 +30,6 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
     setError(null);
 
-    // Check if Supabase is configured
-    if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-      setError('This is a demo version. Supabase database is not configured for the deployed site.');
-      setIsLoading(false);
-      return;
-    }
-
     try {
       console.log('Attempting login with:', formData.email);
       const { data, error: authError } = await supabase.auth.signInWithPassword({
