@@ -39,7 +39,12 @@ const LoginPage: React.FC = () => {
 
       if (authError) {
         console.error('Auth error:', authError.message);
-        throw authError;
+        if (authError.message.includes('Demo mode')) {
+          setError('This is a demo version. Please configure Supabase to enable full functionality.');
+        } else {
+          throw authError;
+        }
+        return;
       }
 
       console.log('Login response:', data);

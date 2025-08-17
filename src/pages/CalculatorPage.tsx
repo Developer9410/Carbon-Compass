@@ -84,7 +84,11 @@ const CalculatorPage: React.FC = () => {
       if (!response.ok) {
         const errorText = await response.text();
         console.error('API Error:', response.status, errorText);
-        throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+        if (errorText.includes('Demo mode') || response.status === 404) {
+          throw new Error('This is a demo version. Please configure Supabase to enable carbon calculations.');
+        } else {
+          throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+        }
       }
 
       const result = await response.json();
