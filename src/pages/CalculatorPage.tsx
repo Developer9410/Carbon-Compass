@@ -85,7 +85,7 @@ const CalculatorPage: React.FC = () => {
         const errorText = await response.text();
         console.error('API Error:', response.status, errorText);
         if (errorText.includes('Demo mode') || response.status === 404) {
-          throw new Error('This is a demo version. Please configure Supabase to enable carbon calculations.');
+          throw new Error('Carbon calculation service is not available. Please check your Supabase configuration.');
         } else {
           throw new Error(`HTTP error: ${response.status} - ${errorText}`);
         }

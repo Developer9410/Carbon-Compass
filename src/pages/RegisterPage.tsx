@@ -51,11 +51,6 @@ const RegisterPage: React.FC = () => {
       });
 
       if (authError) throw authError;
-        if (authError.message.includes('Demo mode')) {
-          setError('This is a demo version. Please configure Supabase to enable full functionality.');
-          setIsLoading(false);
-          return;
-        }
 
       if (authData.user) {
         // Create profile
