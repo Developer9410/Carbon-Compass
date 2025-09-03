@@ -1,15 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Get environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
 // Debug logging for development
 console.log('Supabase Environment Check:', {
   url: supabaseUrl ? 'Set' : 'Missing',
   key: supabaseAnonKey ? 'Set' : 'Missing',
   mode: import.meta.env.MODE,
-  dev: import.meta.env.DEV
+  dev: import.meta.env.DEV,
+  // Additional debug info
+  allEnvVars: Object.keys(import.meta.env).filter(key => key.startsWith('VITE_'))
 });
 
 // Validate environment variables
