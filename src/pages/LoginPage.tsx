@@ -39,7 +39,12 @@ const LoginPage: React.FC = () => {
 
       if (authError) {
         console.error('Auth error:', authError.message);
-        throw authError;
+        if (authError.message.includes('Supabase not configured') || authError.message.includes('Connect to Supabase')) {
+          setError('Please configure Supabase by clicking "Connect to Supabase" in the top right corner of the editor.');
+        } else {
+          setError(authError.message);
+        }
+        return;
       }
 
       console.log('Login response:', data);

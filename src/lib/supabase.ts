@@ -1,70 +1,62 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Get environment variables with multiple fallback methods
-const getEnvVar = (key: string): string | undefined => {
-  // Try import.meta.env first (Vite's preferred method)
-  if (typeof import.meta !== 'undefined' && import.meta.env) {
-    const value = import.meta.env[key];
-    if (value) return value;
-  }
-  
-  // Try process.env as fallback
-  if (typeof process !== 'undefined' && process.env) {
-    const value = process.env[key];
-    if (value) return value;
-  }
-  
-  // Try window environment (for runtime injection)
-  if (typeof window !== 'undefined' && (window as any).env) {
-    const value = (window as any).env[key];
-    if (value) return value;
-  }
-  
-  return undefined;
-};
-
-const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
-const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
+// Get environment variables with enhanced debugging
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Enhanced debug logging
 console.log('Supabase Environment Debug:', {
   url: supabaseUrl ? `${supabaseUrl.substring(0, 20)}...` : 'Missing',
   key: supabaseAnonKey ? `${supabaseAnonKey.substring(0, 20)}...` : 'Missing',
-  mode: typeof import.meta !== 'undefined' ? import.meta.env?.MODE : 'unknown',
-  dev: typeof import.meta !== 'undefined' ? import.meta.env?.DEV : 'unknown',
-  // Show all available VITE_ variables for debugging
-  availableViteVars: typeof import.meta !== 'undefined' && import.meta.env 
-    ? Object.keys(import.meta.env).filter(key => key.startsWith('VITE_'))
-    : [],
-  // Show process.env VITE_ variables
-  processEnvViteVars: typeof process !== 'undefined' && process.env
-    ? Object.keys(process.env).filter(key => key.startsWith('VITE_'))
-    : []
+  mode: import.meta.env.MODE,
+  dev: import.meta.env.DEV,
+  // Show all available environment variables for debugging
+  allEnvVars: Object.keys(import.meta.env),
+  // Show process.env for comparison
+  processEnvKeys: typeof process !== 'undefined' ? Object.keys(process.env || {}) : 'N/A'
 });
 
-// Validate environment variables
+// For Bolt Hosting, we need to provide a way to configure Supabase
 if (!supabaseUrl || !supabaseAnonKey) {
-  const errorMessage = `
-Missing Supabase environment variables:
-- VITE_SUPABASE_URL: ${supabaseUrl ? 'Set' : 'Missing'}
-- VITE_SUPABASE_ANON_KEY: ${supabaseAnonKey ? 'Set' : 'Missing'}
-
-Please ensure these variables are configured in your deployment environment.
-For local development, add them to your .env file.
-For production, add them to your hosting platform's environment variables.
-  `.trim();
+  console.error('Missing Supabase environment variables:', {
+    url: supabaseUrl ? 'Set' : 'Missing',
+    key: supabaseAnonKey ? 'Set' : 'Missing'
+  });
   
-  console.error(errorMessage);
-  throw new Error(errorMessage);
+  // Create a placeholder client that shows helpful messages
+  const placeholderClient = {
+    auth: {
+      signUp: () => Promise.resolve({ 
+        data: { user: null, session: null }, 
+        error: { message: 'Please configure Supabase by clicking "Connect to Supabase" in the top right corner.' }
+      }),
+      signInWithPassword: () => Promise.resolve({ 
+        data: { user: null, session: null }, 
+        error: { message: 'Please configure Supabase by clicking "Connect to Supabase" in the top right corner.' }
+      }),
+      signOut: () => Promise.resolve({ error: null }),
+      getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+      getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } })
+    },
+    from: () => ({
+      select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }) }) }),
+      insert: () => ({ select: () => ({ single: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }) }) }),
+      update: () => ({ eq: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }) }),
+      delete: () => ({ eq: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }) })
+    })
+  };
+  
+  export const supabase = placeholderClient as any;
+} else {
+  // Create real Supabase client
+  export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    },
+  });
+  
+  console.log('✅ Supabase client initialized successfully');
 }
-
-// Create Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-  },
-});
-
-console.log('✅ Supabase client initialized successfully');

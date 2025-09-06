@@ -6,8 +6,8 @@ export default defineConfig({
   plugins: [react()],
   define: {
     // Ensure environment variables are properly injected at build time
-    __VITE_SUPABASE_URL__: JSON.stringify(process.env.VITE_SUPABASE_URL || ''),
-    __VITE_SUPABASE_ANON_KEY__: JSON.stringify(process.env.VITE_SUPABASE_ANON_KEY || ''),
+    'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(process.env.VITE_SUPABASE_URL || ''),
+    'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(process.env.VITE_SUPABASE_ANON_KEY || ''),
   },
   optimizeDeps: {
     exclude: ['lucide-react'],

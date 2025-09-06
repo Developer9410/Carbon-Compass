@@ -53,6 +53,10 @@ const RegisterPage: React.FC = () => {
       if (authError) throw authError;
 
       if (authData.user) {
+        if (!authData.user.id) {
+          throw new Error('Please configure Supabase by clicking "Connect to Supabase" in the top right corner.');
+        }
+        
         // Create profile
         const { error: profileError } = await supabase
           .from('profiles')
