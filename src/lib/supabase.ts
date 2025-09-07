@@ -10,47 +10,33 @@ console.log('Supabase Environment Debug:', {
   key: supabaseAnonKey ? `${supabaseAnonKey.substring(0, 20)}...` : 'Missing',
   mode: import.meta.env.MODE,
   dev: import.meta.env.DEV,
-  // Show all available environment variables for debugging
-  allEnvVars: Object.keys(import.meta.env),
-  // Show process.env for comparison
-  processEnvKeys: typeof process !== 'undefined' ? Object.keys(process.env || {}) : 'N/A'
+  availableViteVars: Object.keys(import.meta.env).filter(key => key.startsWith('VITE_')),
+  processEnvKeys: typeof process !== 'undefined' ? Object.keys(process.env || {}).filter(key => key.startsWith('VITE_')) : 'N/A'
 });
+
+// Declare supabase variable at top level
+let supabase: any;
 
 // For Bolt Hosting, we need to provide a way to configure Supabase
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables:', {
-    url: supabaseUrl ? 'Set' : 'Missing',
-    key: supabaseAnonKey ? 'Set' : 'Missing'
+  console.log('Missing Supabase environment variables:', {
+    'VITE_SUPABASE_URL': supabaseUrl ? 'Set' : 'Missing',
+    'VITE_SUPABASE_ANON_KEY': supabaseAnonKey ? 'Set' : 'Missing'
   });
   
-  // Create a placeholder client that shows helpful messages
-  const placeholderClient = {
-    auth: {
-      signUp: () => Promise.resolve({ 
-        data: { user: null, session: null }, 
-        error: { message: 'Please configure Supabase by clicking "Connect to Supabase" in the top right corner.' }
-      }),
-      signInWithPassword: () => Promise.resolve({ 
-        data: { user: null, session: null }, 
-        error: { message: 'Please configure Supabase by clicking "Connect to Supabase" in the top right corner.' }
-      }),
-      signOut: () => Promise.resolve({ error: null }),
-      getSession: () => Promise.resolve({ data: { session: null }, error: null }),
-      getUser: () => Promise.resolve({ data: { user: null }, error: null }),
-      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } })
-    },
-    from: () => ({
-      select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }) }) }),
-      insert: () => ({ select: () => ({ single: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }) }) }),
-      update: () => ({ eq: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }) }),
-      delete: () => ({ eq: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }) })
-    })
-  };
-  
-  export const supabase = placeholderClient as any;
+  const errorMessage = `Missing Supabase environment variables:
+- VITE_SUPABASE_URL: ${supabaseUrl ? 'Set' : 'Missing'}
+- VITE_SUPABASE_ANON_KEY: ${supabaseAnonKey ? 'Set' : 'Missing'}
+
+Please ensure these variables are configured in your deployment environment.
+For local development, add them to your .env file.
+For production, add them to your hosting platform's environment variables.`;
+
+  console.error(errorMessage);
+  throw new Error(errorMessage);
 } else {
   // Create real Supabase client
-  export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  supabase = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
@@ -60,3 +46,5 @@ if (!supabaseUrl || !supabaseAnonKey) {
   
   console.log('✅ Supabase client initialized successfully');
 }
+
+export { supabase };
